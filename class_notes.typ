@@ -10,7 +10,7 @@
 ]
 #v(2em)
 
-#outline(title: "Contents", indent: true)
+#outline(title: "Contents", indent: auto)
 #v(2em)
 #line(length: 100%)
 #v(2em)
