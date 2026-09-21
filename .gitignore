@@ -1,0 +1,6 @@
+# gitignore personal files
+personal_files/*
+
+# ignore hidden files except .gitignore
+**/.*
+!.gitignore
