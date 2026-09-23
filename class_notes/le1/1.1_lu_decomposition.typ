@@ -473,4 +473,11 @@ matrix
   ]
 // ─────────────────────────────────────────────
 
-#bibliography("../../resources/bibs/class_notes/le1/lu_decomposition.bib")
+#heading(numbering: none)[AI Contribution]
+
+I asked Claude to help me with some of the formatting in Typst for this document.
+Conversation: #link("https://claude.ai/share/02456e30-14e9-4522-98f2-6af58e175029")
+
+#bibliography("../../resources/bibs/class_notes/le1/1.1_lu_decomposition.bib")
+
+
