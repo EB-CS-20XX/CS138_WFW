@@ -216,4 +216,6 @@ $ L = mat(2, 0, 0; -1, 0.5, 0; 3, 3.5, 4), quad
     x_1 &= y_1 - u_12 x_2 - u_13 x_3 &&= 0.5 - (-2.5)(3) - (0.5)(-6) = 0.5 + 7.5 + 3 = 11 $
   $ x = mat(11; 3; -6) $
 
-#bibliography("../../resources/bibs/compendium/le1/1.2_numerical_methods_for_engineers.bib")
+#bibliography("../../resources/bibs/compendium/le1/1.1_numerical_methods_for_engineers.bib")
+
+
