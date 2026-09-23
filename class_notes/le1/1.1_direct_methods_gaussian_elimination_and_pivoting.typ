@@ -6,7 +6,7 @@
   date: "September 23, 2026",
 )
 
-= Direct Methods: Gaussian Elimination @ruaya2026direct[Slides 23-26]
+= Direct Methods: Gaussian Elimination @ruaya2026gaussian[Slides 23-26]
 
 Elementary row operations preserve the solution space:
 1. Swapping two rows ($R_i <-> R_j$).
@@ -105,7 +105,7 @@ Solution vector: $x = mat(delim: "[", 2; 3; -1)$.
 
 == Pivoting Strategies
 
-=== Partial Pivoting @ruaya2026direct[Slides 27-28]
+=== Partial Pivoting @ruaya2026gaussian[Slides 27-28]
 - Search the current column below, including the diagonal to find the maximum entry:
     $ |a_(i_p, k)| = max_(k <= i <= n) |a_(i, k)| $
 - Swap row $k$ with row $i_p$. No variable reordering needed.
@@ -151,13 +151,13 @@ Solution: $x_1 approx 2.0001$, $x_2 approx 2.9999$
 
 With partial pivoting, we get $x = mat(delim: "[", 2.00; 3.00)$.
 
-=== Full Pivoting @ruaya2026direct[Slide 29-31]
+=== Full Pivoting @ruaya2026gaussian[Slide 29-31]
 - Search the entire remaining active submatrix:
   $ |a_(r, c)| = max_(k <= i, j <= n) |a_(i, j)| $
 - Then swap row $k$ with row $r$, and swap column $k$ with column $c$.
 - It is the most numerically stable, but very expensive in resources and requires permuting elements of the solution vector.
 
-=== Scaled Partial Pivoting @ruaya2026direct[Slide 32-34]
+=== Scaled Partial Pivoting @ruaya2026gaussian[Slide 32-34]
 - Simulates full pivoting without actual column exchanges and without physically copying large row vectors in memory.
 
 - *Compute scale factors (row maximums):*
