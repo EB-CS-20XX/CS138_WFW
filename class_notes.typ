@@ -1387,4 +1387,4 @@ Applicable ONLY to Symmetric Positive Definite (SPD) matrices ($A^T = A$ and $x^
 ]
 
 
-#bibliography("../../resources/bibs/class_notes/le1/Group_1_WFW.bib", style: "apa", full: true)
+#bibliography("resources/bibs/class_notes/le1/Group_1_WFW.bib", style: "apa", full: true)
