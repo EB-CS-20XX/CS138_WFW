@@ -26,7 +26,8 @@
   [$omega$], [Relaxation Parameter], [Weighting scalar in SOR ($omega > 1$ for over-relaxation)],
   [$kappa(A)$ / $"cond"(A)$], [Condition Number], [$kappa(A) = ||A|| dot ||A^(-1)||$ (measures numerical sensitivity)],
   [$||A||$], [Induced Matrix Norm], [$||A|| = max_(x != 0) (||A x|| / ||x||)$ (e.g., $1$-norm or $oo$-norm)],
-  [$rho(T)$], [Spectral Radius], [$rho(T) = max_i |lambda_i(T)|$ (governs convergence if $rho(T) < 1$)]
+  [$rho(T)$], [Spectral Radius], [$rho(T) = max_i |lambda_i(T)|$ (governs convergence if $rho(T) < 1$)],
+  [$chevron.l x, y chevron.r$],[Dot Product],[Get the dot product between vectors $x$ and $y$]
 )
 
 #v(1em)
@@ -113,3 +114,90 @@ Applicable ONLY to Symmetric Positive Definite (SPD) matrices ($A^T = A$ and $x^
 
 - *Condition Number:*
   $ kappa(A) = ||A|| dot ||A^(-1)|| $
+
+  == 6. Eigenvalue Approximation
+
+  === 6.1 Power Methods
+  These methods are used to approximate eigenvalues by approximating eigenvectors. Once an approximate eigenvector $x^(\(k\))$ has been found, the Rayleigh Quotient can be used to calculate its associated eigenvalue.
+  ==== 6.1.1. Rayleigh Quotient
+  $ lambda = (x^(\(k\)T)A x^(\(k\)))/(x^(\(k\)T)x^(\(k\))) $
+  ==== 6.1.2 Power Method
+  Approximates the eigenvector associated with the largest eigenvalue $|lambda_1|$
+  $ x^(\(k+1\)) = A x^(\(k\)) $
+
+  === 6.1.3 Normalized Power method
+  FApproximates the eigenvector associated with the largest eigenvalue $|lambda_1|$, but without the values of $x^(\(k\))$ going crazy
+  $ x^(\(k+1\)) = (A x^(\(k\)))/(||A x^(\(k\))||_infinity) $
+
+  Normalization of this kind can be applied to other Power Methods.
+  === 6.1.4 Inverse Power Method
+  Approximates the eigenvector associated with the eigenvalue $1/(|lambda_n|)$. From there you can derive the smallest eigenvalue $|lambda_n|$.
+  $ x^(\(k+1\)) = A^(-1) x^(\(k\)) $
+  or
+  $ A x^(\(k+1\)) =  x^(\(k\)) $
+  === 6.1.5 Shifted Inverse Power Method
+  Approximates the eigenvector associated with the eigenvalue $|lambda|$ closest to some $sigma$.
+  $ x^((k+1)) = (A - sigma I)^(-1) x^((k)) $
+  or
+  $ (A - sigma I) x^((k+1)) = x^((k)) $
+
+  === 6.2 Gershgorin Circle Theorem
+  The Shifted Inverse Power Method works best when $sigma$ is close to $lambda$. The Gershgorin Circle Theorem allows us to calculate bounds for a matrix's eigenvalues, giving us some idea of where they are. 
+
+  ==== 6.2.1 Theorem
+  For any complex eigenvalues, for any rows $i$ of the $n$x$n$ matrix $A$.
+
+  $ |lambda - a_(i\i)| <= |limits(sum)_(c=1,c!=i)^n a_(i\c)| $
+
+  This theorem lets us define circles on the complex plane, wherein the eigenvalues of $A$ are.
+  
+  Any circles that do not intersect with other circles must have an eigenvalue inside them. Any $k$ circles that intersect must have $k$ eigenvalues within their union.
+  ==== 6.2.2 Gershgorin Discs
+
+  $ D_i = {z ∈ CC: |z-a_(\i\i)| <= |limits(sum)_(c=1, c!=i)^n a_(i\c)|}$
+
+  === 6.3 QR Factorization
+  You wish to factor a matrix $A$ such that $A = Q\R$.
+
+  $A = mat(delim: "[",
+  dots.v, dots.v, dots.v;
+  a_1, a_2, a_3;
+  dots.v, dots.v, dots.v;
+  )$
+  $Q = mat(delim: "[",
+  dots.v, dots.v, dots.v;
+  q_1, q_2, q_3;
+  dots.v, dots.v, dots.v;
+  )$
+  $R = mat(delim: "[",
+  r_11, r_12, r_13;
+  0, r_22, r_23;
+  0,0,r_33)$
+
+  $v_1 = a_(1)$, $r_11 = ||v_1||_2$, $q_1 = v_1/r_11$
+
+  $r_12 = chevron.l q_1, a_2 chevron.r$
+  
+  $v_2 = a_2 - r_12q_1$
+  
+  $r_22 = ||v_2||_2$, $q_2 = v_2/r_22$
+
+  $r_13 = chevron.l q_1, a_3 chevron.r$, $r_23 = chevron.l q_2, a_3 chevron.r$
+
+  $v_3 = a_3 - r_13q_1 - r_23q_2$
+  
+  $r_33 = ||v_3||_2$, $q_3 = v_3/r_33$
+
+  ...
+
+  $r_(j\i) = cases(
+    chevron.l q_j\, a_i chevron.r\, "if" j<i,
+    0\,"if" j>i
+  )$
+
+  $v_i = a_i - limits(sum)_(j=1)^(i-1) r_(j\i)q_j$
+
+  $r_(i\i) = ||v_i||_2$, $q_i = v_i/r_(i\i)$
+
+  
+

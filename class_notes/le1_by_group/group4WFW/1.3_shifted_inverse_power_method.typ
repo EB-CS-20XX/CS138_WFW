@@ -34,12 +34,12 @@ The *Shifted Inverse Power Method* does this by subtracting a shift $sigma I$ be
   [Inverse Power],
   [Smallest $|lambda|$],
   [$A z^((k+1)) = x^((k))$],
-  [$1 / |lambda_n|$],
+  [$1 / (|lambda_n|)$],
 
   [*Shifted Inverse Power*],
   [*$lambda$ closest to $sigma$*],
   [$(A - sigma I) z^((k+1)) = x^((k))$],
-  [*$1 / |lambda - sigma|$*]
+  [*$1 / (|lambda - sigma|)$*]
 )
 
 = Derivation & Intuition
