@@ -1,4 +1,4 @@
-#import "../../template.typ": project
+#import "../../../template.typ": project
 
 #show: project.with(
   title: "1.3 Shifted Inverse Power Method",
@@ -165,4 +165,4 @@ Within 3 iterations, the estimate already matches $5 - sqrt(34)$ to 4 decimal pl
 - *Flop Count:* \
   $L U$ factorization takes $2/3 n^3$ once. Each iteration only costs $2 n^2$ for the forward and back solves, making total cost roughly $2/3 n^3 + 2 m n^2$ for $m$ iterations.
 
-#bibliography("../../resources/bibs/class_notes/le1/1.3_shifted_inverse_power_method.bib", style: "apa")
+#bibliography("../../../resources/bibs/class_notes/le1/1.3_shifted_inverse_power_method.bib", style: "apa")
