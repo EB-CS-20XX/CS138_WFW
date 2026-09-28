@@ -6,7 +6,7 @@
   date: "September 23, 2026",
 )
 
-= Systems of Linear Algebraic Equations (SLEs) @burden2010[p.362]
+= Systems of Linear Algebraic Equations (SLEs) @burden2010numerical[p.362]
 
 A general system of $n$ linear equations with $n$ unknowns is:
 $
@@ -27,7 +27,7 @@ In matrix form, this is expressed as $A x = b$, or using the augmented matrix $[
 
 = Sensitivity and Error Analysis
 
-== Matrix Norms @burden2010[p.432]
+== Matrix Norms @burden2010numerical[p.432]
 For $A in M_n (RR)$, the induced matrix norm is:
 $ ||A|| = max_(x eq.not 0) frac(||A x||, ||x||) $
 
@@ -43,7 +43,7 @@ $ ||A|| = max_(x eq.not 0) frac(||A x||, ||x||) $
 - *$oo$-norm (maximum absolute row sum):* $||A||_oo = max_i sum_(j=1)^n |a_(i j)|$
 - *2-norm (maximum singular value)*: $||A||_2 = max_(||bold(x)||_2 = 1) ||A bold(x)||_2$
 
-== Condition Number @burden2010[p.470-473]
+== Condition Number @burden2010numerical[p.470-473]
 The condition number measures the sensitivity of the solution to perturbations in $A$ and $b$:
 $ "cond"(A) equiv ||A|| ||A^(-1)||, quad 1 <= "cond"(A) <= oo $
 - *Well-conditioned:* $"cond"(A) approx 1$ (small perturbations yield small changes in $x$).
