@@ -9,9 +9,9 @@
 #show bibliography: set heading(numbering: none)
 
 
-== [W4] Real Eigenvalue Approximations of a Square Matrix
+= Real Eigenvalue Approximations of a Square Matrix
 #align(right)[_*1.2. Eigenvalue Approximations of a Square Matrix*_]
-==== Motivation
+== Motivation
 Recall that the convergence of iterative methods discussed in Section 1.2 rely on the spectral radius of matrices being less than 1.
 
 Recall further that the spectral radius of a matrix is defined as the magnitude of the largest eigenvalue of that matrix.
@@ -19,8 +19,8 @@ Recall further that the spectral radius of a matrix is defined as the magnitude 
 For these reasons it is a problem that there is no general formula for computing the eigenvalues for $n$x$n$ matrices when $n>= 5$.
 
 And for these same reasons methods exist for finding/approximating eigenvalues and eigenvectors
-=== [W4] Eigenvalue Approximations: Power Method, Gershgorin Circle Theorem
-==== Power Method:
+== Eigenvalue Approximations: Power Method
+=== Power Method:
 Let us say we have an $n$x$n$ matrix $A$ with eigenvalues $lambda_1, lambda_2,..., lambda_n$. And let us assume that they are numbered in order of magnitude:
 
 $|lambda_1|>= |lambda_2|>=...>= |lambda_n|$
@@ -61,7 +61,7 @@ $lambda_1 = (x^(\(k\)T)x^(\(k+1\)))/(x^(\(k\)T)x^(\(k\))) = (x^(\(k\)T)A x^(\(k\
 
 Thus, we have found an approximation for $lambda_1$. Coincidentally, this formula follows the Rayleigh Quotient, which will be discussed further later on. #cite(<pages>)
 
-==== Normalized Power Method
+=== Normalized Power Method
 
 One issue with the Power method is the values of our approximation vector $x^(\(k\))$ as $k → infinity$. They will either approach $infinity$ or $0$, depending on the value of $lambda_1$ #cite(<tudelft>)
 
@@ -71,7 +71,7 @@ Thus the solution is to normalize the vector after each iteration, giving us:
 
 $x^(\(k+1\)) = (A x^(\(k\)))/(||A x^(\(k\))||_infinity)$
 
-==== Inverse Power Method
+=== Inverse Power Method
 
 But what if you do not want to find the eigenvalue with the largest magnitude? Given an invertible matrix $A$ with eigenvalues $lambda_1, lambda_2,..., lambda_n$, we find that the eigenvalues for $A^(-1)$ are $1/lambda_1, 1/lambda_2,..., 1/lambda_n$. #cite(<ruaya2026eigen>)
 
@@ -79,4 +79,4 @@ If we revisit the assumption that $|lambda_1|>= |lambda_2|>=...>= |lambda_n|$, t
 
 Thus, if $|lambda_(n-1)| > |lambda_n|$ (STRICTLY GREATER THAN), then applying the Power method to $A^(-1)$ will yield $1/lambda_n$, from which we can obtain $lambda_n$, the eigvenvalue of $A$ with the smallest magnitude.
 
-#bibliography("/resources/bibs/class_notes/1.3_power_methods.bib", style: "apa")
+#bibliography("/resources/bibs/class_notes/le1/1.3_power_methods.bib", style: "apa")

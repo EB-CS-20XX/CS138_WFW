@@ -118,8 +118,12 @@ Applicable ONLY to Symmetric Positive Definite (SPD) matrices ($A^T = A$ and $x^
   == 6. Eigenvalue Approximation
 
   === 6.1 Power Methods
-  These methods are used to approximate eigenvalues by approximating eigenvectors. Once an approximate eigenvector $x^(\(k\))$ has been found, the Rayleigh Quotient can be used to calculate its associated eigenvalue.
-  ==== 6.1.1. Rayleigh Quotient
+  These methods are used to approximate eigenvalues by approximating eigenvectors. Once an approximate eigenvector $x^(\(k\))$ has been found, it can be used to calculate its associated eigenvalue
+  ==== 6.1.1 Calculating Eigenvalue from Eigenvector
+  ==== 6.1.1.1 Infinity Norm
+  $ lambda = ||x^(\(k\))||_infinity $
+  But only before normalization
+  ==== 6.1.1.2 Rayleigh Quotient
   $ lambda = (x^(\(k\)T)A x^(\(k\)))/(x^(\(k\)T)x^(\(k\))) $
   ==== 6.1.2 Power Method
   Approximates the eigenvector associated with the largest eigenvalue $|lambda_1|$
