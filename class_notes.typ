@@ -1176,612 +1176,648 @@ Conversation:_ #link("https://claude.ai/share/a2c73a0e-7515-493e-b290-2af4721afa
 ]
 
 == [W4] Real Eigenvalue Approximations of a Square Matrix
-#align(right)[_*1.2. Eigenvalue Approximations of a Square Matrix*_]
+#align(right)[_*1.3. Real Eigenvalue Approximations of a Square Matrix*_]
+
 ==== Motivation
-Recall that the convergence of iterative methods discussed in Section 1.2 rely on the spectral radius of matrices being less than 1.
+#pad(left: 2em)[
+  Recall that the convergence of iterative methods discussed in Section 1.2 rely on the spectral radius of matrices being less than 1.
 
-Recall further that the spectral radius of a matrix is defined as the magnitude of the largest eigenvalue of that matrix.
+  Recall further that the spectral radius of a matrix is defined as the magnitude of the largest eigenvalue of that matrix.
 
-For these reasons it is a problem that there is no general formula for computing the eigenvalues for $n$x$n$ matrices when $n>= 5$.
+  For these reasons it is a problem that there is no general formula for computing the eigenvalues for $n times n$ matrices when $n >= 5$.
 
-And for these same reasons methods exist for finding/approximating eigenvalues and eigenvectors
+  And for these same reasons methods exist for finding/approximating eigenvalues and eigenvectors.
+]
+
 === [W4] Eigenvalue Approximations: Power Method, Gershgorin Circle Theorem
-==== Power Method:
-Let us say we have an $n$x$n$ matrix $A$ with eigenvalues $lambda_1, lambda_2,..., lambda_n$. And let us assume that they are numbered in order of magnitude:
 
-$|lambda_1|>= |lambda_2|>=...>= |lambda_n|$
+==== Power Method
+#pad(left: 2em)[
+  Let us say we have an $n times n$ matrix $A$ with eigenvalues $lambda_1, lambda_2,..., lambda_n$. And let us assume that they are numbered in order of magnitude:
 
-Any vector, $x$, can be formed using only a linear combination of its eigenvectors. #cite(<ruaya2026eigen>)
+  $ |lambda_1| >= |lambda_2| >= ... >= |lambda_n| $
 
-$A x = lambda x$
+  Any vector, $x$, can be formed using only a linear combination of its eigenvectors. @ruaya2026eigen
 
-$A x = c_1 lambda_1 v_1+ c_2 lambda_2 v_2 + ... + c_n lambda_n v_n$
+  $ A x &= lambda x \
+    A x &= c_1 lambda_1 v_1+ c_2 lambda_2 v_2 + ... + c_n lambda_n v_n $
 
-Should we decide to repeatedly multiply both sides by $A$ until we reach $A^k$ we should find that
+  Should we decide to repeatedly multiply both sides by $A$ until we reach $A^k$ we should find that:
 
-$A [A x] = lambda[c_1 lambda_1 v_1+ c_2 lambda_2 v_2 + ... + c_n lambda_n v_n]$
+  $ A [A x] &= lambda[c_1 lambda_1 v_1+ c_2 lambda_2 v_2 + ... + c_n lambda_n v_n] \
+    A^2 x &= c_1 lambda_1^2 v_1+ c_2 lambda_2^2 v_2 + ... + c_n lambda_n^2 v_n \
+    &dots.v \
+    A^k x &= c_1 lambda_1^k v_1+ c_2 lambda_2^k v_2 + ... + c_n lambda_n^k v_n \
+    A^k x &= lambda_1^k (c_1 v_1+ c_2 (lambda_2 / lambda_1)^k v_2 + ... + c_n (lambda_n / lambda_1)^k v_n) $
 
-$A^2 x = c_1 lambda_1^2 v_1+ c_2 lambda_2^2 v_2 + ... + c_n lambda_n^2 v_n$
+  If we assume that $|lambda_1| > |lambda_2|$ (STRICTLY GREATER THAN) then as $k -> infinity$, $(lambda_i/lambda_1)^k -> 0, forall i, 2 <= i <= n$. This leaves us with:
 
-...
+  $ A^k x = c_1 lambda_1^k v_1 $
 
-$A^k x = c_1 lambda_1^k v_1+ c_2 lambda_2^k v_2 + ... + c_n lambda_n^k v_n$
+  Which means $A^k x$ approaches some multiple of the dominant eigenvector, $v_1$, as $k -> infinity$. @tudelft
 
-$A^k x = lambda_1^k (c_1  v_1+ c_2 (lambda_2 / lambda_1)^k v_2 + ... + c_n (lambda_n / lambda_1)^k v_n)$
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Power Method Iteration
+    #line(length: 100%)
+    With this, our iteration is as follows:
+    $ x^((k+1)) = A x^((k)) = lambda_1 x^((k)) $
 
-If we assume that $|lambda_1|> |lambda_2|$ (STRICTLY GREATER THAN) then as $k → infinity, (lambda_i/lambda_1)^k → 0, forall i, 2<=i<=n$. This leaves us with
+    To solve for $lambda_1$ we can multiply $x^((k)T)$ to both sides to get:
+    $ x^((k)T) x^((k+1)) &= lambda_1 x^((k)T) x^((k)) \
+      lambda_1 &= (x^((k)T) x^((k+1))) / (x^((k)T) x^((k))) = (x^((k)T) A x^((k))) / (x^((k)T) x^((k))) $
 
-$A^k x = c_1 lambda_1^k v_1 $
+    Thus, we have found an approximation for $lambda_1$. Coincidentally, this formula follows the Rayleigh Quotient, which will be discussed further later on. @pages
+  ]
+]
 
-Which means $A^k x$ approaches some multiple of the dominant eigenvector, $v_1$, as $k→infinity$. #cite(<tudelft>)
+==== Normalized Power Method
+#pad(left: 2em)[
+  One issue with the Power method is the values of our approximation vector $x^((k))$ as $k -> infinity$. They will either approach $infinity$ or $0$, depending on the value of $lambda_1$. @tudelft
 
-With this our iteration is as follows:
+  $ limits(lim)_(k -> infinity) ||A^k x|| = cases(infinity &"if" lambda_1 > 1, 0 &"if" lambda_1 < 1) $
 
-$x^(\(k+1\)) = A x^(\(k\)) = lambda_1 x^(\(k\))$
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Normalized Power Method Logic
+    #line(length: 100%)
+    The solution is to normalize the vector after each iteration, giving us:
+    $ x^((k+1)) = (A x^((k))) / (||A x^((k))||_infinity) $
+  ]
+]
 
-To solve for $lambda_1$ we can multiply $x^(\(k\)T)$ to both sides to get:
+==== Inverse Power Method
+#pad(left: 2em)[
+  But what if you do not want to find the eigenvalue with the largest magnitude? Given an invertible matrix $A$ with eigenvalues $lambda_1, lambda_2,..., lambda_n$, we find that the eigenvalues for $A^(-1)$ are $1/lambda_1, 1/lambda_2,..., 1/lambda_n$. @ruaya2026eigen
 
-$x^(\(k\)T)x^(\(k+1\))= lambda_1 x^(\(k\)T)x^(\(k\)) $
+  If we revisit the assumption that $|lambda_1| >= |lambda_2| >= ... >= |lambda_n|$, then it follows that $|1/lambda_1| <= |1/lambda_2| <= ... <= |1/lambda_n|$.
 
-$lambda_1 = (x^(\(k\)T)x^(\(k+1\)))/(x^(\(k\)T)x^(\(k\))) = (x^(\(k\)T)A x^(\(k\)))/(x^(\(k\)T)x^(\(k\)))$
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Inverse Power Method Logic
+    #line(length: 100%)
+    If $|lambda_(n-1)| > |lambda_n|$ (STRICTLY GREATER THAN), then applying the Power method to $A^(-1)$ will yield $1/lambda_n$, from which we can obtain $lambda_n$, the eigenvalue of $A$ with the smallest magnitude.
+  ]
+]
 
-Thus, we have found an approximation for $lambda_1$. Coincidentally, this formula follows the Rayleigh Quotient, which will be discussed somewhat, further in this section. cite pages
+==== Gershgorin Circle Theorem
+#pad(left: 2em)[
+  Recall how the Inverse Shifted Power Method converges quickest when the shift, $sigma$, is very close to an actual eigenvalue, $lambda$. How do we come up with a $sigma$ that is close to $lambda$?
+
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Gershgorin Circle Theorem
+    #line(length: 100%)
+    This theorem states that for any complex eigenvalues and rows, $i$, in the matrix $A$:
+    $ |lambda - a_(i i)| <= limits(sum)_(c=1, c!=i)^n |a_(i c)| $
+
+    This inequality forms *Gershgorin Discs* centered at $a_(i i)$ with a radius of $limits(sum)_(c=1, c!=i)^n |a_(i c)|$ wherein the eigenvalues of $A$ can be found somewhere within them. @ruaya2026eigen
+
+    $ D_i = {z in CC: |z - a_(i i)| <= limits(sum)_(c=1, c!=i)^n |a_(i c)| } $
+  ]
+
+  Furthermore, if any disc is not intersecting with any other disc, there must be an eigenvalue inside it. And if any $k$ discs are intersecting, there must be $k$ eigenvalues present within their union.
+
+  Knowing this can allow us to find values that are close to eigenvalues, for applications such as the Inverse Shifted Power Method.
+]
+
+==== Shifted Inverse Power Method
+#pad(left: 2em)[
+  When solving for eigenvalues iteratively, the standard methods have clear limitations:
+  - *Power Method:* Only converges to the dominant eigenvalue $|lambda_1|$ (largest magnitude).
+  - *Inverse Power Method:* Runs power iteration on $A^(-1)$, finding the eigenvalue closest to zero ($|lambda_n|$).
+
+  Neither method can find an interior or arbitrary eigenvalue between the two extremes. If we need a specific eigenvalue near some target value $sigma$, we need a way to make that target eigenvalue dominant.
+
+  The *Shifted Inverse Power Method* does this by subtracting a shift $sigma I$ before inverting. @burden2010numerical Whichever eigenvalue is closest to $sigma$ gets amplified the most, making it the dominant eigenvalue of the shifted inverse matrix. @ruaya2026eigen
+
+  #table(
+    columns: (1.5fr, 1.2fr, 2fr, 2fr),
+    align: (left, center, left, left),
+    table.header(
+      [*Method*], [*Finds*], [*Iteration Step*], [*Dominant Factor*]
+    ),
+    [Power Method], [Largest $|lambda|$], [$x^((k+1)) = (A x^((k))) / norm(A x^((k)))$], [$|lambda_1|$],
+    [Inverse Power], [Smallest $|lambda|$], [$A z^((k+1)) = x^((k))$], [$1 / (|lambda_n|)$],
+    [*Shifted Inverse Power*], [*$lambda$ closest to $sigma$*], [$(A - sigma I) z^((k+1)) = x^((k))$], [*$1 / (|lambda - sigma|)$*]
+  )
+
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Derivation & Intuition
+    #line(length: 100%)
+    Start with the standard eigenvalue equation for $A in RR^(n times n)$:
+    $ A v = lambda v $
+
+    Subtract $sigma v$ from both sides:
+    $ (A - sigma I) v = (lambda - sigma) v $
+
+    Assuming $sigma != lambda$, multiply both sides by $(A - sigma I)^(-1)$ and divide by $(lambda - sigma)$:
+    $ (A - sigma I)^(-1) v = 1 / (lambda - sigma) v $
+
+    This tells us two important things:
+    + The eigenvectors $v$ of $(A - sigma I)^(-1)$ are identical to the eigenvectors of $A$.
+    + The eigenvalues are shifted and inverted: $mu = 1 / (lambda - sigma)$
+
+    *Why Near Shifts Converge Quickly:*
+    As our shift $sigma$ approaches a specific eigenvalue $lambda_j$:
+    - $|lambda_j - sigma| -> 0$, meaning $|mu_j| = 1 / |lambda_j - sigma| -> infinity$.
+    - For all other eigenvalues $lambda_k != lambda_j$, $|mu_k|$ stays finite and comparatively small.
+  ]
+
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Algorithm: LU Solving over Inversion
+    #line(length: 100%)
+    Computing $(A - sigma I)^(-1)$ directly is slow and prone to roundoff error. Instead of explicitly inverting, we rewrite the step $z^((k+1)) = (A - sigma I)^(-1) x^((k))$ as a linear system:
+    $ (A - sigma I) z^((k+1)) = x^((k)) $
+
+    Since $sigma$ is fixed:
+    + Factor $A - sigma I = L U$ *once* at the start.
+    + For $k = 0, 1, 2, dots$:
+      - Solve $L y = x^((k))$ (forward solve)
+      - Solve $U z^((k+1)) = y$ (back solve)
+      - Let $c_(k+1)$ be the entry in $z^((k+1))$ with largest magnitude: $|c_(k+1)| = norm(z^((k+1)))_infinity$
+      - Normalize: $x^((k+1)) = z^((k+1)) / c_(k+1)$
+      - Recover eigenvalue: $lambda^((k+1)) = sigma + 1 / c_(k+1)$
+      - Stop when $norm(x^((k+1)) - x^((k)))_infinity < epsilon$ or $|lambda^((k+1)) - lambda^((k))| < epsilon$.
+  ]
+
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Worked Examples
+    #line(length: 100%)
+    Consider the matrix from class:
+    $ A = mat(1, 3, 8; 3, 1, 3; 8, 3, 1) $
+    True eigenvalues: $lambda_1 = 5 + sqrt(34) approx 10.83$, $lambda_2 = 5 - sqrt(34) approx -0.83$, and $lambda_3 = -7$.
+
+    *Example 1: Finding $lambda = -7$ using $sigma = -6$* \
+    Shifted matrix:
+    $ A + 6 I = mat(7, 3, 8; 3, 7, 3; 8, 3, 7) $
+    LU decomposition via Gaussian elimination:
+    $ L = mat(1, 0, 0; 3/7, 1, 0; 8/7, -3/40, 1), quad U = mat(7, 3, 8; 0, 40/7, -3/7; 0, 0, -87/40) $
+
+    Start with $x^((0)) = mat(-1; 0; 1)$.
+    - Solve $L y = x^((0)) => y = mat(-1; 3/7; 609/280)$
+    - Solve $U z^((1)) = y => z^((1)) = mat(1; 0; -1)$
+    - Scaling and recovery:
+      $ c_1 &= -1 quad (norm(z^((1)))_infinity = 1) \
+        x^((1)) &= mat(1; 0; -1) \
+        lambda^((1)) &= -6 + 1 / (-1) = -7 $
+    Because $sigma = -6$ is already very close to $-7$, it found the exact eigenvalue and eigenvector in a single iteration.
+
+    *Example 2: Finding $lambda_2 approx -0.83095$ using $sigma = -1$* \
+    To target the interior eigenvalue $lambda_2 = 5 - sqrt(34)$, choose shift $sigma = -1$:
+    $ A + I = mat(2, 3, 8; 3, 2, 3; 8, 3, 2) $
+    Factoring $A + I = L U$ and iterating:
+
+    #table(
+      columns: (1fr, 2fr, 2fr, 2fr),
+      align: (center, center, center, center),
+      table.header([*Iteration $k$*], [*$norm(z^((k)))_infinity$*], [*$lambda^((k))$*], [*Absolute Error*]),
+      [1], [6.000000], [$-0.833333$], [$2.38 times 10^(-3)$],
+      [2], [5.913043], [$-0.830882$], [$6.99 times 10^(-5)$],
+      [3], [$136/23 approx 5.913043$], [$-113/136 approx -0.830882$], [$6.99 times 10^(-5)$]
+    )
+  ]
+
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Practical Notes
+    #line(length: 100%)
+    - *Near-Singularity is a Benefit:* When $sigma approx lambda$, $A - sigma I$ is close to singular, which usually means high condition numbers and rounding errors. In this method, however, those numerical errors get amplified directly along the eigenvector of $lambda$, which actually accelerates convergence.
+    - *Shift Guessing:* The closer $sigma$ is to the eigenvalue, the faster it converges. Initial guesses are usually taken from the diagonal entries or estimated bounds like Gershgorin discs.
+    - *Flop Count:* $L U$ factorization takes $2/3 n^3$ once. Each iteration only costs $2 n^2$ for the forward and back solves, making total cost roughly $2/3 n^3 + 2 m n^2$ for $m$ iterations.
+  ]
+]
 
 === [W4] Eigenvalue Approximations: Gram-Schmidt, QR Factorization and Iteration
 
+==== QR Factorization
+#pad(left: 2em)[
+  For an $m times n$ matrix $A$, $A$ is decomposed into a product of two matrices:
+  $ A = Q R $
+  Where $Q$ is an $m times m$ orthogonal matrix and $R$ is an $m times n$ upper triangular matrix.
+
+  *Rationale:*
+  + Eigenvalues of upper triangular matrices are the diagonals.
+  + Find a matrix $B$ that is similar to $A$ that makes obtaining eigenvalues easy.
+  + Since $Q^(-1) = Q^T$, we have the following:
+    $ B v = lambda v => B v = Q^T A Q v = lambda y => A(Q v) = lambda(Q v) $
+    - If $v_A$ is the eigenvector of $B$, then $v_B = Q v_A$ is the corresponding vector of $A$.
+
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== QR Factorization Process
+    #line(length: 100%)
+    *1. Rebuild $A$*
+    $ R = mat(
+      1, s_(hat(y)->+x), s_(hat(z)->+x);
+      0, 1, s_(hat(y)->+x); 
+      0, 0, 1
+    ) mat(
+      1, , ;
+      , 1, ;
+      , , lambda_3
+    ) mat(
+      1, , ;
+      , lambda_2, ;
+      , , 1
+    ) mat(
+      lambda_1, , ;
+      , 1, ;
+      , , 1
+    ) I_3 $
+
+    *2. Reverse Process*
+    $ Q^(-1) A = Q^T A = R \
+      Q^T A &= [q_1, q_2, q_3]^T [a_1, a_2, a_3] \
+      &= mat(
+        q_1^T a_1, q_1^T a_2, q_1^T a_3;
+        q_2^T a_1, q_2^T a_2, q_2^T a_3;
+        q_3^T a_1, q_3^T a_2, q_3^T a_3
+      ) \
+      &= mat(
+        r_11, r_12, r_13;
+        0, r_22, r_23;
+        0, 0, r_33
+      ) \
+      &= R $
+
+    *3. Factorization Steps*
+    + Obtain $Q$ via Gram-Schmidt orthonormalization (Math 40).
+    + Obtain $R$ through $Q^T A$.
+  ]
+]
+
+==== QR Iteration Derivation
+#pad(left: 2em)[
+  Suppose $A$ is a square matrix with *real distinct eigenvalues*. We want to find a similar matrix to $A = Q R$.
+  $ B &= Q^T A Q \
+      &= Q^T Q R Q \
+      &= R Q $
+  $A$ and $B$ have the same eigenvalues.
+
+  $ &"Let" & A &= A^((0)) \
+    &"Iteration" & A^((k)) &= Q^((k)) R^((k)) => \ 
+    & & A^((k + 1)) &= R^((k)) Q^((k)) \
+    & & A^((k + 1)) &= (Q^((0)) Q^((1)) ... Q^((k)))^T A^((0)) (Q^((0)) Q^((1)) ... Q^((k))) \
+    & & &-> V^T A^((0)) V = Lambda $
+
+  Basically, the column vectors $V$ converge to the eigenvectors of $A$.
+
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== QR Iteration Pseudocode
+    #line(length: 100%)
+    $ &" 1:" quad "Given: Symmetric" n times n "matrix" A \
+      &" 2:" quad A^((0)) = A, V^((0)) = I_n \
+      &" 3:" quad "for" k=1,2,...,n_"max"-1 "do" \
+      &" 4:" quad quad "Gram-Schmidt orthonormalization of" A^((k)) -> Q^((k)) \
+      &" 5:" quad quad "Compute" R^((k)) = (Q^((k)))^T A^((k)) \
+      &" 6:" quad quad A^((k+1)) = R^((k)) Q^((k)) \
+      &" 7:" quad quad V^((k+1)) = V^((k)) Q^((k)) \
+      &" 8:" quad quad "if" ||"subdiag"(A^((k+1)))||_F <= epsilon_"tol" "then" \
+      &" 9:" quad quad quad "return diag"(A^((k+1))) = {lambda_1^*, lambda_2^*, ..., lambda_n^*}, V = [v_1, ..., v_n] \
+      &"10:" quad quad "end if" \
+      &"11:" quad "end for" $
+  ]
+
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Additional Notes
+    #line(length: 100%)
+    - If $A$...
+      - has all real distinct eigenvalues: $Lambda$ is upper triangular.
+      - is also symmetric: $Lambda = "diag"(lambda_1,...,lambda_n)$.
+    - else, will not converge.
+    - QR Iteration...
+      - fails to converge if $|lambda_i| = |lambda_j|$.
+      - converges linearly.
+  ]
+]
 == [W5] Least Squares Approximation, Rayleigh Quotient
-#align(right)[_*1.3. Least Squares (optional)*_]
+#align(right)[_*1.4. Least Squares Approximation, Rayleigh Quotient*_]
 
 === Rayleigh Quotient
+#pad(left: 2em)[
+  Given a symmetric square matrix $A$ and a non-zero vector $x$, the Rayleigh Quotient is defined as:
+  $ R(A, x) = frac(x^T A x, x^T x) $
+  where $x^T x != 0$ since $x != 0$.
 
-Given a symmetric square matrix $A$ and a non-zero vector $x$, the Rayleigh Quotient is defined as:
-
-$
-  R(A, x) = frac(x^T A x, x^T x)
-$
-
-where $x^T x != 0$ since $x != 0$.
-
-The Rayleigh Quotient provides a scalar approximation of an eigenvalue of $A$ given an eigenvector approximation $x$.
+  The Rayleigh Quotient provides a scalar approximation of an eigenvalue of $A$ given an eigenvector approximation $x$.
+]
 
 ==== Eigenvalue Interpretation
+#pad(left: 2em)[
+  If $x$ is an exact eigenvector of $A$ corresponding to eigenvalue $lambda$, then:
+  $ A x = lambda x $
 
-If $x$ is an exact eigenvector of $A$ corresponding to eigenvalue $lambda$, then:
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Substitution into the Rayleigh Quotient
+    #line(length: 100%)
+    $ R(A, x) &= frac(x^T A x, x^T x) \
+              &= frac(x^T (lambda x), x^T x) \
+              &= frac(lambda x^T x, x^T x) \
+              &= lambda $
+  ]
 
-$
-  A x = lambda x
-$
-
-Substituting into the Rayleigh Quotient:
-
-$
-  R(A, x)
-  &= frac(x^T A x, x^T x) \
-  &= frac(x^T (lambda x), x^T x) \
-  &= frac(lambda x^T x, x^T x) \
-  &= lambda
-$
-
-Therefore, if $x$ is an exact eigenvector, the Rayleigh Quotient returns its corresponding eigenvalue exactly. If $x$ is a "good enough" approximation of an eigenvector, the Rayleigh Quotient achieves cubic convergence toward the eigenvalue.
+  Therefore, if $x$ is an exact eigenvector, the Rayleigh Quotient returns its corresponding eigenvalue exactly. If $x$ is a "good enough" approximation of an eigenvector, the Rayleigh Quotient achieves cubic convergence toward the eigenvalue.
+]
 
 ==== Rayleigh Inverse Power Method
+#pad(left: 2em)[
+  The Rayleigh Inverse Power Method combines the shifted inverse power iteration with the Rayleigh Quotient. By dynamically updating the shift parameter $sigma$ using the Rayleigh Quotient at each step, the method achieves extremely fast convergence toward a target eigenvalue.
 
-The Rayleigh Inverse Power Method combines the shifted inverse power iteration with the Rayleigh Quotient. By dynamically updating the shift parameter $sigma$ using the Rayleigh Quotient at each step, the method achieves extremely fast convergence toward a target eigenvalue.
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Algorithm Steps
+    #line(length: 100%)
+    #set enum(numbering: "1.")
+    + *Initialization (Iteration 0):* \
+      Choose an initial non-zero vector $x^{(0)}$ and compute the initial eigenvalue estimate:
+      $ lambda^{(0)} = frac((x^{(0)})^T A x^{(0)}, (x^{(0)})^T x^{(0)}) $
 
-===== Algorithm Steps
+    + *Iterative Step:* \
+      For $k = 0, 1, 2, ...$:
+      - Solve the system of linear equations using the current estimate $lambda^{(k)}$ as the shift:
+        $ (A - lambda^{(k)} I) w^{(k)} = x^{(k)} $
+      - Normalize the resulting vector:
+        $ x^{(k+1)} = frac(w^{(k)}, ||w^{(k)}||_infinity) $
+      - Update the eigenvalue approximation using the Rayleigh Quotient:
+        $ lambda^{(k+1)} = frac((x^{(k+1)})^T A x^{(k+1)}, (x^{(k+1)})^T x^{(k+1)}) $
+  ]
 
-1. *Initialization (Iteration 0):*
-   Choose an initial non-zero vector $x^{(0)}$ and compute the initial eigenvalue estimate:
-   $
-     lambda^{(0)} = frac((x^{(0)})^T A x^{(0)}, (x^{(0)})^T x^{(0)})
-   $
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Worked Example
+    #line(length: 100%)
+    Consider the matrix:
+    $ A = mat(1, 2, 3; 1, 2, 1; 3, 2, 1) $
+    We want to approximate its dominant eigenvalue $lambda_1 = 3 + sqrt(5) approx 5.236068$ using an initial guess vector $x^{(0)} = vec(1, 1, 1)$.
 
-2. *Iterative Step:*
-   For $k = 0, 1, 2, ...$:
-   
-   - Solve the system of linear equations using the current estimate $\ lambda^{(k)}$ as the shift:
-     $
-       (A - lambda^{(k)} I) w^{(k)} = x^{(k)}
-     $
-     
-   - Normalize the resulting vector:
-     $
-       x^{(k+1)} = frac(w^{(k)}, ||w^{(k)}||_infinity)
-     $
-     
-   - Update the eigenvalue approximation using the Rayleigh Quotient:
-     $
-       lambda^{(k+1)} = frac((x^{(k+1)})^T A x^{(k+1)}, (x^{(k+1)})^T x^{(k+1)})
-     $
+    *Step 0: Initial Rayleigh Quotient* \
+    Compute $A x^{(0)}$:
+    $ A x^{(0)} = mat(1, 2, 3; 1, 2, 1; 3, 2, 1) vec(1, 1, 1) = vec(6, 4, 6) $
+    Compute the initial eigenvalue approximation $lambda^{(0)}$:
+    $ lambda^{(0)} = frac((x^{(0)})^T A x^{(0)}, (x^{(0)})^T x^{(0)}) = frac(vec(1, 1, 1)^T vec(6, 4, 6), vec(1, 1, 1)^T vec(1, 1, 1)) = frac(16, 3) approx 5.333333 $
 
-==== Worked Example
+    *Step 1: First Rayleigh Inverse Power Iteration* \
+    Solve the linear system $(A - lambda^{(0)} I) w^{(0)} = x^{(0)}$ where $lambda^{(0)} = 16/3$:
+    $ mat(-13/3, 2, 3; 1, -10/3, 1; 3, 2, -13/3) w^{(0)} = vec(1, 1, 1) $
+    Solving the system gives:
+    $ w^{(0)} = vec(-12, -15/2, -12) $
+    Normalize using the infinity norm ($||w^{(0)}||_infinity = 12$):
+    $ x^{(1)} = frac(w^{(0)}, ||w^{(0)}||_infinity) = vec(-1, -5/8, -1) $
+    
+    Compute $A x^{(1)}$:
+    $ A x^{(1)} = mat(1, 2, 3; 1, 2, 1; 3, 2, 1) vec(-1, -5/8, -1) = vec(-21/4, -13/4, -21/4) $
+    
+    Compute the updated Rayleigh Quotient $lambda^{(1)}$:
+    $ lambda^{(1)} &= frac((x^{(1)})^T A x^{(1)}, (x^{(1)})^T x^{(1)}) \
+                   &= frac(vec(-1, -5/8, -1)^T vec(-21/4, -13/4, -21/4), vec(-1, -5/8, -1)^T vec(-1, -5/8, -1)) \
+                   &= frac(802, 153) approx 5.241830 $
 
-Consider the matrix:
-$
-  A = mat(1, 2, 3; 1, 2, 1; 3, 2, 1)
-$
+    Thus, $lambda^{(1)} approx 5.241830$, which is much closer to the true dominant eigenvalue $lambda_1 = 3 + sqrt(5) approx 5.236068$. The Rayleigh Inverse Power Method gives a highly accurate approximation after just one iteration.
+  ]
+]
 
-We want to approximate its dominant eigenvalue $lambda_1 = 3 + sqrt(5) approx 5.236068$ using an initial guess vector $x^{(0)} = vec(1, 1, 1)^T$.
-
-===== Step 0: Initial Rayleigh Quotient
-
-Compute $A x^{(0)}$:
-
-$
-
-  A x^{(0)} =
-  mat(1, 2, 3; 1, 2, 1; 3, 2, 1)
-  vec(1, 1, 1)
-  = vec(6, 4, 6)
-
-$
-
-Compute the initial eigenvalue approximation $lambda^(0)$:
-
-$
-
-  lambda^(0)
-  = frac(
-    (x^(0))^T A x^(0),
-    (x^(0))^T x^(0)
-  )
-  = frac(
-    vec(1, 1, 1)^T vec(6, 4, 6),
-    vec(1, 1, 1)^T vec(1, 1, 1)
-  )
-  = frac(16, 3)
-  approx 5.333333
-
-$
-
-===== Step 1: First Rayleigh Inverse Power Iteration
-
-Solve the linear system
-
-$(A - lambda^(0) I) w^(0) = x^(0)$
-
-where $lambda^(0) = 16/3$:
-
-$
-
-  mat(
-    -13/3, 2, 3;
-    1, -10/3, 1;
-    3, 2, -13/3
-  )
-  w^(0)
-  = vec(1, 1, 1)
-
-$
-
-Solving the system gives:
-
-$
-
-  w^(0)
-  = vec(-12, -15/2, -12)
-
-$
-
-Normalize using the infinity norm:
-
-$
-
-  ||w^(0)||_infinity = 12
-
-$
-
-Thus,
-
-$
-
-  x^(1)
-  = frac(w^(0), ||w^(0)||_infinity)
-  = vec(-1, -5/8, -1)
-
-$
-
-Compute $A x^(1)$:
-
-$
-
-  A x^(1)
-  =
-  mat(1, 2, 3; 1, 2, 1; 3, 2, 1)
-  vec(-1, -5/8, -1)
-  = vec(-21/4, -13/4, -21/4)
-
-$
-
-Compute the updated Rayleigh Quotient $lambda^(1)$:
-
-$
-
-  lambda^(1)
-  = frac(
-    (x^(1))^T A x^(1),
-    (x^(1))^T x^(1)
-  )
-
-$
-
-$
-
-  = frac(
-    vec(-1, -5/8, -1)^T
-    vec(-21/4, -13/4, -21/4),
-    vec(-1, -5/8, -1)^T
-    vec(-1, -5/8, -1)
-  )
-
-$
-
-$
-
-  = frac(802, 153)
-  approx 5.241830
-
-$
-
-Thus,
-
-$
-
-  lambda^(1) approx 5.241830
-
-$
-
-which is closer to the true dominant eigenvalue
-
-$
-
-  lambda_1 = 3 + sqrt(5) approx 5.236068.
-
-$
-
-The Rayleigh Inverse Power Method therefore gives a much more accurate approximation after just one iteration.
-
-
-=== [Arc 1] Async; Bonus Reading: Unconstrained Optimization: Objective Functions,, Linear Least Squares
+=== [Arc 1] Async; Bonus Reading: Unconstrained Optimization: Objective Functions, Linear Least Squares
 
 ==== Motivation: Data Fitting
-Have data: $(x_i, y_i)$ and model:
-$
-  y(x) = a + b x + c x^2
-$
-Find data that (best) fit the model.
+#pad(left: 2em)[
+  Given data: $(x_i, y_i)$ and a model:
+  $ y(x) = a + b x + c x^2 $
+  Find coefficients that (best) fit the model. We get the following system:
+  $ a + b x_1 + c x_1^2 &= y_1 \
+    &dots.v \
+    a + b x_n + c x_n^2 &= y_n $
+    
+  This is not going to happen for $n > 3$. A quadratic model only has three unknowns $(a, b, c)$, so it generally cannot pass through all $n$ data points. Instead, we can choose $a, b, c$ such that the sum of the squares of residuals is minimized:
+  $ abs(a + b x_1 + c x_1^2 - y_1)^2 + dots + abs(a + b x_n + c x_n^2 - y_n)^2 -> min! $
+  This is called *linear least squares* specifically because the coefficients $x$ enter linearly into the residual.
 
-We get the following system:
-$
-  a + b x_1 + c x_1^2 = y_1 \
-  dots.v \
-  a + b x_n + c x_n^2 = y_n \
-$
-This is not going to happen for $n > 3$. A quadratic model only has three unknowns $(a, b, c)$, so it generally cannot pass all $n$ data points (i.e. satisfy all equations). Instead we can choose $a, b, c$ such that the sum of the squares of residuals is minimized:
-$
-  abs(a + b x_1 + c x_1^2 - y_1)^2 
-  + dots +
-  abs(a + b x_n + c x_n^2 - y_n)^2  -> min!
-$
-This is called *linear least squares* specifically because the coefficients $x$ enter linearly into the residual.
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Matrix Formulation
+    #line(length: 100%)
+    We rewrite this in matrix form:
+    $ norm(A x - b)^2_2 -> min! $
+    with
+    $ A = mat(1, x_1, x_1^2; dots.v, dots.v, dots.v; 1, x_n, x_n^2), quad x = mat(a; b; c), quad b = mat(y_1; dots.v; y_n) $
+    Matrices such as $A$ are called *Vandermonde matrices*. These are easy to generalize to higher polynomial degrees.
 
-We rewrite this in matrix form.
-$
-  norm(A x - b)^2_2 -> min!
-$
-with
-$
-  A = mat(
-    1, x_1, x_1^2;
-    dots.v, dots.v, dots.v;
-    1, x_n, x_n^2
-  ), quad 
-  x = mat(a; b; c), quad
-  b = mat(y_1; dots.v; y_n)
-$
-Matrices such as $A$ are called *Vandermonde matrices*. These are easy to generalize to higher polynomial degrees.
-
-Define new notation:
-$
-  norm(A x - b)^2_2 -> min! <=> A x tilde.equiv b.
-$
-
-Note that data fitting is only one example where least squares (LSQ) problems arise. There are many other applications that lead to $A x tilde.equiv b$, with different matrices.
+    Define new notation:
+    $ norm(A x - b)^2_2 -> min! <=> A x tilde.equiv b $
+    Note that data fitting is only one example where least squares (LSQ) problems arise. There are many other applications that lead to $A x tilde.equiv b$, with different matrices.
+  ]
+]
 
 ==== Properties of Least-Squares
-Consider LSQ problem $A x tilde.equiv b$ and its associated objective function $phi(x) = norm(b - A x)^2_2$. Assume $A$ has full rank. Then, the problem:
-- Always has a solution. As $norm(x) -> infinity$, $phi -> infinity$. Then, if $phi$ is continuous, there must be a minimum.
-- Always unique (because we are assuming full rank)
-  - If $A$ does not have full rank, there's a null space, i.e. $n$ with $A n = 0$. Then, if $x$ is a solution, $norm(b - A(x + n))_2 = norm(b - A x)$.
+#pad(left: 2em)[
+  Consider LSQ problem $A x tilde.equiv b$ and its associated objective function $phi(x) = norm(b - A x)^2_2$. Assume $A$ has full rank. Then, the problem:
+  - *Always has a solution.* As $norm(x) -> infinity$, $phi -> infinity$. Then, if $phi$ is continuous, there must be a minimum.
+  - *Is always unique* (because we are assuming full rank).
+    - If $A$ does not have full rank, there is a null space, i.e., an $n$ with $A n = 0$. Then, if $x$ is a solution, $norm(b - A(x + n))_2 = norm(b - A x)$.
+]
 
 ==== Least-Squares: Finding a Solution by Minimization
-Examine the objective function, find its minimum.
-$
-  phi(x) &= (b - A x)^top (b - A x) \
-  &= b^top b - 2x^top A^top b + x^top A^top A x
-$
-Getting its gradient,
-$
-  gradient phi(x) = -2 A^top b + 2 A^top A x
-$
+#pad(left: 2em)[
+  Examine the objective function and find its minimum:
+  $ phi(x) &= (b - A x)^T (b - A x) \
+           &= b^T b - 2x^T A^T b + x^T A^T A x $
+  Getting its gradient:
+  $ gradient phi(x) = -2 A^T b + 2 A^T A x $
 
-$gradient phi(x) = 0$ yields $A^top A x = A^top b$. These are called *normal equations*.
+  Setting $gradient phi(x) = 0$ yields:
+  $ A^T A x = A^T b $
+  These are called the *normal equations*.
+]
 
 ==== Orthogonal Projection
-A *projector* is a matrix satisfying $P^2 = P$. An *orthogonal projector* is a symmetric projector.
+#pad(left: 2em)[
+  A *projector* is a matrix satisfying $P^2 = P$. An *orthogonal projector* is a symmetric projector.
 
-To create an orthogonal projector projecting onto $"span"{bold(q_1), bold(q_2), dots, bold(q_k)}$ for orthonormal $bold(q_i)$, we can define $Q = mat(bold(q_1), bold(q_2), dots, bold(q_k))$. Then,
-$Q Q^top$ will project and is obviously symmetric.
+  To create an orthogonal projector projecting onto $"span"{bold(q_1), bold(q_2), dots, bold(q_k)}$ for orthonormal $bold(q_i)$, we can define $Q = mat(bold(q_1), bold(q_2), dots, bold(q_k))$. Then $Q Q^T$ will project and is obviously symmetric.
 
-*Example.* Show that $P = A(A^top A)^(-1) A^top$ is an orthogonal projector onto $"colspan"(A)$.
-$
-  P^2 = P P &= [A(A^top A)^(-1) A^top] [A(A^top A)^(-1) A^top] \
-  &= A(A^top A)^(-1) [A^top A(A^top A)^(-1)] A^top \
-  &= A(A^top A)^(-1) I A^top \
-  &= A(A^top A)^(-1) A^top = P \
-$
-Since $P^2 = P$, $P$ is a projector. Since $A = A^top$,
-$
-  P^T &= (A(A^top A)^(-1) A^top)^top \
-  &= (A^top)^top ((A^top A)^(-1))^top A^top \
-  &= A ((A^top A)^(-1))^top A^top = P\
-$
-Thus, $P$ is symmetric. Lastly, take any vector $x$. Then,
-$
-  P x &= A(A^top A)^(-1) A^top x \
-  &= A[(A^top A)^(-1) A^top x] \
-  &= A c  quad "(some vector" c)
-$
-Since all vectors of $A c$ is in $"colspan"(A)$, $P x in "colspan"(A)$ for all $x$. $square.filled$
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Example Proof: Projector onto Column Space
+    #line(length: 100%)
+    Show that $P = A(A^T A)^(-1) A^T$ is an orthogonal projector onto $"colspan"(A)$.
+    
+    *1. Prove it is a projector ($P^2 = P$):*
+    $ P^2 = P P &= [A(A^T A)^(-1) A^T] [A(A^T A)^(-1) A^T] \
+                &= A(A^T A)^(-1) [A^T A(A^T A)^(-1)] A^T \
+                &= A(A^T A)^(-1) I A^T \
+                &= A(A^T A)^(-1) A^T = P $
+    Since $P^2 = P$, $P$ is a projector. 
+    
+    *2. Prove it is symmetric ($P^T = P$):*
+    $ P^T &= (A(A^T A)^(-1) A^T)^T \
+          &= (A^T)^T ((A^T A)^(-1))^T A^T \
+          &= A ((A^T A)^T)^(-1) A^T \
+          &= A (A^T A)^(-1) A^T = P $
+    Thus, $P$ is symmetric. 
+    
+    *3. Prove it projects onto $"colspan"(A)$:* \
+    Lastly, take any vector $x$. Then,
+    $ P x &= A(A^T A)^(-1) A^T x \
+          &= A[(A^T A)^(-1) A^T x] \
+          &= A c quad "(where" c "is some vector)" $
+    Since all vectors of $A c$ are in $"colspan"(A)$, $P x in "colspan"(A)$ for all $x$. $square.filled$
+  ]
 
-Then, to define $P$, we need to assume that $A^top A$ has full rank (i.e. is invertible).
+  Note that to define $P$, we need to assume that $A^T A$ has full rank (i.e., is invertible).
+]
 
 ==== Pseudoinverse
-A nonsquare $m times n$ matrix $A$ (where m > n) has no inverse in a usual sense. 
+#pad(left: 2em)[
+  A nonsquare $m times n$ matrix $A$ (where $m > n$) has no inverse in a usual sense. 
 
-If $"rank"(A) = n$, the *pseudoinverse* is 
-$
-  A^+ = (A^top A)^(-1) A^top.
-$
+  If $"rank"(A) = n$, the *pseudoinverse* is:
+  $ A^+ = (A^T A)^(-1) A^T $
 
-Define the condition number of a tall-and-skinny matrix:
-$
-  "cond"_2(A) = norm(A)_2 norm(A^+)_2
-$
-If not full rank, $"cond"(A) = infinity$ by convention.
+  Define the condition number of a tall-and-skinny matrix:
+  $ "cond"_2(A) = norm(A)_2 norm(A^+)_2 $
+  If not full rank, $"cond"(A) = infinity$ by convention.
 
-This is important because we now have another of solving LSQ that is analogous to $A x = b => x = A^(-1) b$:
-$
-  A x tilde.equiv b => x = A^+ b
-$
+  This is important because we now have another way of solving LSQ that is analogous to $A x = b => x = A^(-1) b$:
+  $ A x tilde.equiv b => x = A^+ b $
+]
 
 ==== Sensitivity and Conditioning of Least-Squares
-We can relate $norm(A x)$ and $b$ using trigonometry:
-$
-  cos(theta) = norm(A x)_2/norm(b)_2
-$
+#pad(left: 2em)[
+  We can relate $norm(A x)$ and $b$ using trigonometry:
+  $ cos(theta) = norm(A x)_2 / norm(b)_2 $
 
-Recall $x = A^+ b$. Also, $Delta x = A^+ Delta b$. Then,
-$
-  Delta x &= A^+ Delta b \
-  norm(Delta x)_2 &= norm(A^+ Delta b)_2 \
-  norm(Delta x)_2 &<= norm(A^+)_2 norm(Delta b)_2 \
-  norm(Delta x)_2/norm(x)_2 &<= frac(norm(A^+)_2 norm(Delta b)_2, norm(x)_2) \
-  &= frac(kappa(A), norm(A)_2 norm(A^+)_2) norm(A^+)_2 norm(b)_2/norm(b)_2 norm(Delta b)_2/norm(x)_2 \
-  &= kappa(A) frac(norm(b)_2, norm(A)_2 norm(x)_2) norm(Delta b)_2/norm(b)_2 \
-  &<= kappa(A) norm(b)_2/norm(A x)_2 norm(Delta b)_2/norm(b)_2 \
-  &= kappa(A) 1/cos(theta) norm(Delta b)_2/norm(b)_2 
-$
-Since $b perp "colspan"(A)$ (i.e. $theta = pi"/"2$) gives $cos(theta) = 0$, then any $theta approx pi"/"2$ is bad. This means that the sensivity of LSQ solutions depend on both $A$ and $b$.
+  Recall $x = A^+ b$. Also, $Delta x = A^+ Delta b$. Then,
+  $ Delta x &= A^+ Delta b \
+    norm(Delta x)_2 &= norm(A^+ Delta b)_2 \
+    norm(Delta x)_2 &<= norm(A^+)_2 norm(Delta b)_2 \
+    frac(norm(Delta x)_2, norm(x)_2) &<= frac(norm(A^+)_2 norm(Delta b)_2, norm(x)_2) \
+    &= frac(kappa(A), norm(A)_2 norm(A^+)_2) norm(A^+)_2 frac(norm(b)_2, norm(b)_2) frac(norm(Delta b)_2, norm(x)_2) \
+    &= kappa(A) frac(norm(b)_2, norm(A)_2 norm(x)_2) frac(norm(Delta b)_2, norm(b)_2) \
+    &<= kappa(A) frac(norm(b)_2, norm(A x)_2) frac(norm(Delta b)_2, norm(b)_2) \
+    &= kappa(A) 1/cos(theta) frac(norm(Delta b)_2, norm(b)_2) $
 
-What about changes in the matrix?
-$
-  norm(Delta x)_2/norm(x)_2 <= ["cond"(A)^2 tan(theta) + "cond"(A)] dot norm(Delta A)_2/norm(A)_2
-$
-This leads to two behaviors:
-+ If $tan(theta) approx 0$, the condition number is $"cond"(A)$.
-+ Otherwise, $"cond"(A)^2 tan(theta)$.
+  Since $b perp "colspan"(A)$ (i.e. $theta = pi/2$) gives $cos(theta) = 0$, then any $theta approx pi/2$ is bad. This means that the sensitivity of LSQ solutions depends on both $A$ and $b$.
+
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== What about changes in the matrix?
+    #line(length: 100%)
+    $ frac(norm(Delta x)_2, norm(x)_2) <= ["cond"(A)^2 tan(theta) + "cond"(A)] dot frac(norm(Delta A)_2, norm(A)_2) $
+    This leads to two behaviors:
+    + If $tan(theta) approx 0$, the condition number is $"cond"(A)$.
+    + Otherwise, it is dominated by $"cond"(A)^2 tan(theta)$.
+  ]
+]
 
 ==== Transforming Least Squares to Upper Triangular
-Suppose we have $A = Q R$, with $Q$ square and orthogonal, and $R$ upper triangular (QR factorization). We can transform a least sqaures problem $A x tilde.equiv b$ to one with an upper triangular matrix:
-$
-  norm(A x - b)_2 &= norm(Q^top (Q R x - b))_2 \
-  &= norm(R x - Q^top b)_2
-$
+#pad(left: 2em)[
+  Suppose we have $A = Q R$, with $Q$ square and orthogonal, and $R$ upper triangular (QR factorization). We can transform a least squares problem $A x tilde.equiv b$ to one with an upper triangular matrix:
+  $ norm(A x - b)_2 &= norm(Q^T (Q R x - b))_2 \
+                    &= norm(R x - Q^T b)_2 $
 
-Then, we transformed $A x tilde.equiv b => R x tilde.equiv Q^top b$.
+  Then, we transformed $A x tilde.equiv b => R x tilde.equiv Q^T b$.
 
-To minimize the residual norm of some residual vector $r$,
-$
-  norm(r)^2_2 = norm((Q^top b)_"top" - R_"top" x)^2_2 + norm((Q^top b)_"bottom")^2_2.
-$
-Since $R_"top"$ is invertible, we can find $x$ such that
-$
-  (Q^top b)_"top" - R_"top" x = 0 => R_"top" x = (Q^top b).
-$
-This leaves
-$
-  norm(r)^2_2 = norm((Q^top b)_"bottom")^2_2.
-$
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Minimizing Residual Norm & Top/Bottom Notation
+    #line(length: 100%)
+    Let $A$ be an $m times n$ matrix with $m > n$. Then, $Q$ is $m times m$ and $R = mat(R_"top"; 0)$ where $R_"top"$ is $n times n$ and upper triangular. $Q^T b$ has $m$ entries. We can separate it as:
+    $ Q^T b = mat((Q^T b)_"top"; (Q^T b)_"bottom") $
+    where $(Q^T b)_"top"$ is the first $n$ entries, and $(Q^T b)_"bottom"$ is the last $m - n$ entries.
 
-Note on $X_"top/bottom"$ notation:
-Let $A_(m times n)$ with $m > n$. Then, $Q$ is $m times m$ and $R = mat(R_"top"; 0)$ where $R_"top"$ is $n times n$ and upper triangular. Also, $Q^top b$ has $m$ entries. Then
-$
-  Q^top b = mat((Q^top b)_"top"; (Q^top b)_"bottom")
-$ 
-where 
-- $(Q^top b)_"top"$ is the first $n$ entries
-- $(Q^top b)_"bottom"$ is the last $m - n$ entries
+    To minimize the residual norm of some residual vector $r$:
+    $ norm(r)^2_2 = norm((Q^T b)_"top" - R_"top" x)^2_2 + norm((Q^T b)_"bottom")^2_2. $
+    
+    Since $R_"top"$ is invertible, we can find $x$ such that:
+    $ (Q^T b)_"top" - R_"top" x = 0 quad => quad R_"top" x = (Q^T b)_"top". $
+    This leaves the final residual norm as:
+    $ norm(r)^2_2 = norm((Q^T b)_"bottom")^2_2. $
+  ]
+]
 
 === [Arc 1] Async; Bonus Reading: Constrained Optimization: Lagrange Multipliers, KKT Conditions
-As discussed earlier, nonlinear least squares have different algorithms for solutions:
+#pad(left: 2em)[
+  As discussed earlier, nonlinear least squares have different algorithms for solutions:
+  - Newton's method
+  - Gauss-Newton method
+  - Levenberg-Marquardt method
 
-- Newton's method
-- Gauss-Newton method
-- Levenberg-Marquard method
+  But can these algorithms still work if we add $p$ equality constraints?
+  $ g_1(x) = 0, quad g_2(x) = 0, quad ..., quad g_p(x) = 0 $
 
-But can these algorithms still work if we add $p$ equality constraints?
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Constrained Nonlinear Least Squares
+    #line(length: 100%)
+    *Minimize:* $f_1(x)^2 + ... + f_m(x)^2$ \
+    *Subject to:* $g_1(x) = 0, quad g_2(x) = 0, quad ..., quad g_p(x) = 0$
 
-$
-g_1(x) = 0,  g_2(x) = 0, ..., g_p(x) = 0
-$
+    Note that the variable is the $n$-vector $x$, $f_i(x)$ is the $i$th (scalar) _residual_, and $g_i(x) = 0$ is the $i$th (scalar) equality constraint. $x$ is feasible if it satisfies the constraints:
+    $ g(x) = mat(g_1(x); dots.v; g_p(x)) = 0 $
 
-#text(12pt)[*Constrained nonlinear least squares*]
+    - A feasible $hat(x)$ is _optimal_/_minimum_ if $h(hat(x)) <= h(x)$ for all feasible $x$.
+    - A feasible $hat(x)$ is _locally optimal_ (a _local minimum_) if there exists an $R > 0$ such that $h(hat(x)) <= h(x)$ for all feasible $x$ with $norm(x - hat(x)) <= R$.
 
-#align(center)[
-Minimize $f_1(x)^2 + ... + f_m(x)^2$
+    In vector notation, this would be:
+    *Minimize:* $norm(f(x))^2$ \
+    *Subject to:* $g(x) = 0$
+    
+    (Where $f : RR^n -> RR^m$ is the vector function $f(x) = (f_1(x),...,f_m(x))$ and $g : RR^n -> RR^p$ is the vector function $g(x) = (g_1(x),...,g_p(x))$.)
+  ]
 
-subject to the constraints $g_1(x) = 0,  g_2(x) = 0, ..., g_p(x) = 0$
+  How do we go about solving this? We use *Lagrange multipliers*.
+
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Lagrange Multipliers & Optimality Conditions
+    #line(length: 100%)
+    *Lagrangian:*
+    $ L(x,z) &= h(x) + z^T g(x) \
+             &= h(x) + z_1 g_1(x) + ... + z_p g_p(x) $
+    The $p$-vector $z = (z_1,...,z_p)$ is the vector of _Lagrange multipliers_.
+
+    *Gradient of Lagrangian:*
+    $ nabla L(tilde(x),tilde(z)) = mat(nabla_x L(tilde(x),tilde(z)); nabla_z L(tilde(x),tilde(z))) $
+    where
+    $ nabla_x L(tilde(x),tilde(z)) &= nabla h(tilde(x)) + tilde(z)_1 nabla g_1 (tilde(x)) + ... + tilde(z)_p nabla g_p (tilde(x)) \
+                                   &= nabla h(tilde(x)) + D g(tilde(x))^T tilde(z) \
+      nabla_z L(tilde(x),tilde(z)) &= g(tilde(x)) $
+
+    *First-order necessary optimality conditions:* \
+    If $hat(x)$ is locally optimal and $"rank"(D g(hat(x))) = p$, then there exist multipliers $hat(z)$ with:
+    $ nabla_x L(hat(x), hat(z)) = nabla h(hat(x)) + D g(hat(x))^T hat(z) = 0 $
+    This forms a set of $n + p$ equations in $n + p$ variables $hat(x), hat(z)$ with $g(hat(x)) = 0$. Note that gradient $nabla h(hat(x))$ is a linear combination of gradients $nabla g_1(hat(x)), ..., nabla g_p(hat(x))$.
+
+    *Regular feasible point:* \
+    If $"rank"(D g(x)) = p$, a feasible $x$ is called a _regular_ feasible point, meaning $nabla g_1(hat(x)), ..., nabla g_p(hat(x))$ are linearly independent.
+  ]
+
+  We can then apply this method to optimize constrained nonlinear least squares.
+
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== First-Order Necessary Optimality Condition (Nonlinear LSQ)
+    #line(length: 100%)
+    *Lagrangian:*
+    $ L(x,z) &= f_1(x)^2 + ... + f_m(x)^2 + z_1 g_1(x) + ... + z_p g_p(x) \
+             &= norm(f(x))^2 + z^T g(x) $
+
+    *Gradients of Lagrangian:*
+    $ nabla_z L(hat(x), hat(z)) &= g(hat(x)) \
+      nabla_x L(hat(x), hat(z)) &= 2 D f(hat(x))^T f(hat(x)) + D g(hat(x))^T hat(z) \
+                                &= 2 mat(nabla f_1(hat(x)), ..., nabla f_m(hat(x))) mat(f_1(hat(x)); dots.v; f_m(hat(x))) + mat(nabla g_1(hat(x)), ..., nabla g_p(hat(x))) mat(hat(z)_1; dots.v; hat(z)_p) $
+
+    *Optimality condition:* \
+    If $hat(x)$ is locally optimal, then there exists $hat(z)$ such that:
+    $ 2 D f(hat(x))^T f(hat(x)) + D g(hat(x))^T hat(z) = 0, quad g(hat(x)) = 0 $
+    Note that the rows of $D g(hat(x))$ need to be linearly independent.
+  ]
+
+  What happens if it was linear instead of nonlinear?
+
+  #block(fill: rgb("f9f9f9"), inset: 12pt, radius: 4pt, width: 100%, stroke: 0.5pt + luma(150))[
+    ===== Constrained Linear Least Squares
+    #line(length: 100%)
+    *Minimize:* $norm(A x - b)^2$ \
+    *Subject to:* $C x = d$
+
+    This is a special case of the earlier problem with $f(x) = A x - b$ and $g(x) = C x - d$. If we apply the general optimality condition to this problem, we will get:
+    
+    $ 2 D f(hat(x))^T f(hat(x)) + D g(hat(x))^T hat(z) &= 2 A^T (A hat(x) - b) + C^T hat(z) = 0 \
+      g(hat(x)) &= C hat(x) - d = 0 $
+
+    From here, we can assemble these in matrix form to get the *Karush-Kuhn-Tucker (KKT) equations*:
+    $ mat(2 A^T A, C^T; C, 0) mat(hat(x); hat(z)) = mat(2 A^T b; d) $
+  ]
 ]
-
-Note that variable is $n$-vector $x$, $f_i(x)$ is $i$th (scalar) _residual_, and $g_i(x) = 0$ is $i$th (scalar) equality constraint.
-
-$x$ is feasible if it satisfies the constraints:
-$
-g(x) = mat(delim: "[", g_1(x); dots.v; g_p (x)) = 0
-$
-
-feasible $hat(x)$ is _optimal_/_minimum_ if $h(hat(x)) <= h(x)$ for all feasible $x$
-
-feasible $hat(x)$ is _locally optimal_ (a _local minimum_) if there exists an $R > 0$ such that
-
-#align(center)[
-$h(hat(x)) <= h(x)$ for all feasible $x$ with $norm(x - hat(x)) <= R$
-]
-
-In Vector notation, this would be:
-
-#align(center)[
-Minimize $norm(f(x))^2$
-
-subject to $g(x) = 0$
-]
-
-Where $f : R^n -> R^m$ is vector function $f(x) = (f_1(x),...,f_m(x))$ and $g : R^n -> R^p$ is vector function $g(x) = (g_1(x),...,g_p(x))$
-
-How do we go about solving this?
-
-#text(12pt)[*Lagrange multipliers*]
-
-*Lagrangian*
-$
-L(x,z) = h(x) + z^T g(x) \
-#h(3.9cm) = h(x) + z_1g_1(x) + ... + z_p g_p (x)
-$
-
-the $p$-vector $z = (z_1,...,z_p)$ is the vector of _Lagrange multipliers_ $z_1,...,z_p$
-
-*Gradient of Lagrangian*
-$
-nabla L(tilde(x),tilde(z)) = mat(delim: "[", nabla_x L(tilde(x),tilde(z));
-nabla_z L(tilde(x),tilde(z)))
-$
-
-where
-
-$
-nabla_x L(tilde(x),tilde(z)) = nabla h(tilde(x)) + tilde(z)_1 nabla g_1 (tilde(x)) + ... + tilde(z)_p nabla g_p (tilde(x)) \
-= nabla h(tilde(x)) + D g(tilde(x))^T tilde(z) #h(1.1cm) \
-nabla_z L(tilde(x),tilde(z))) = g(tilde(x)) #h(5.3cm)
-$
-
-#text(12pt)[*First-order optimality conditions*]
-
-#align(center)[
-  minimize $h(x) #h(0.75cm)$
-
-  subject to $g(x) = 0$
-]
-
-where $h$ is a function from $R^n$ to $R^m$ and g is a function from $R^n$ to $R^p$
-
-#text(12pt)[*First-order necessary optimality conditions*]
-
-if $hat(x)$ is locally optimal and rank $D g(hat(x)) = p$, then there exist multipliers $hat(z)$ with
-
-$
-nabla_x L(tilde(x),tilde(z)) = nabla h(tilde(x)) + D g(tilde(x))^T tilde(z)
-$
-
-This will then form a set of $n + p$ equations in $n + p$ variables $hat(x), hat(z)$ with $g(hat(x)) = 0$
-
-Note that gradient $nabla h(hat(x))$ is a linear combination of gradients $nabla g_1(hat(x)), ..., nabla g_p (hat(x))$
-
-*Regular feasible point*
-
-If rank$(D g (x)) = p$, a feasible x is called a _regular_ feasible point, and at this point, $nabla g_1(hat(x)), ..., nabla g_p (hat(x))$ are linearly independent
-
-#align(center)[
-  \ \
-We can then apply the method of _lagrange multiplier_ to optimize constrained nonlinear least squares
- \
-]
-
-#text(12pt)[*First-order necessary optimality condition*]
-
-*Lagrangian*
-
-$
-L(x,z) = f_1(x)^2 + ... + f_m (x)^2 + z_1 g_1 (x) + ... + z_p g_p (x)
-\
-= norm(f(x))^2 + z^T g(x) #h(3.65cm)
-$
-
-*Gradients of Lagrangian*
-
-$
-nabla_z L(hat(x), hat(z)) = g(hat(x)) 
-\
-nabla_x L(hat(x), hat(x)) = 2D f(hat(x))^T f(hat(x)) + D g(hat(x))^T hat(z)
-\
-= 2mat(delim: "[", nabla f_1 (hat(x)), ..., nabla f_m (hat(x))) mat(delim: "[", f_1 (hat(x)); dots.v; f_m (hat(x))) + mat(delim: "[", nabla g_1 (hat(x)), ..., nabla g_p (hat(x))) mat(delim: "[", hat(z)_1; dots.v; hat(z)_p)
-$
-
-*Optimality condition*
-
-if $hat(x)$ is locally optimal, then there exists $hat(z)$ such that
-
-$
-2D f(hat(x))^T f(hat(x)) + D g(hat(x))^T hat(z) = 0, #h(1cm) g(hat(x)) = 0
-$
-
-Note that the rows of $D g(hat(x))$ need to be linearly independent
-
-\
-What happens if it was linear instead of nonlinear?
-\
-
-#text(12pt)[*Constrained linear least squares*]
-
-#align(center)[
-  minimize $norm(A x - b)^2$
-  \
-  subject to $C x = d$
-]
-
-This is a special case of the earlier problem with
-
-$
-f(x) = A x - b, #h(0.8cm)g(x) = C x - d
-$
-
-If we apply the general optimality condition to this problem, we will get:
-
-$
-2D f(hat(x))^T f(hat(x)) + D g(hat(x))^T hat(z) = 2A^T (A hat(x) - b) + C^T hat(z) = 0, #h(0.4cm) g(hat(x)) = C hat(x) - d = 0
-$
-
-From here, we can get through matrix form the *Karush-Kuhn-Tucker (KKT) equations*
-
-$
-mat(delim: "[", 2A^T A, C^T; C, 0) mat(delim: "[", hat(x); hat(z)) = mat(delim: "[",2A^T b; d)
-$
-
 
 == Cheatsheet
-
-
-=== Symbols Reference
+=== 1. Symbols Reference
 
 #table(
   columns: (1.2fr, 2.5fr, 4.3fr),
@@ -1803,90 +1839,179 @@ $
   [$omega$], [Relaxation Parameter], [Weighting scalar in SOR ($omega > 1$ for over-relaxation)],
   [$kappa(A)$ / $"cond"(A)$], [Condition Number], [$kappa(A) = ||A|| dot ||A^(-1)||$ (measures numerical sensitivity)],
   [$||A||$], [Induced Matrix Norm], [$||A|| = max_(x != 0) (||A x|| / ||x||)$ (e.g., $1$-norm or $oo$-norm)],
-  [$rho(T)$], [Spectral Radius], [$rho(T) = max_i |lambda_i(T)|$ (governs convergence if $rho(T) < 1$)]
+  [$rho(T)$], [Spectral Radius], [$rho(T) = max_i |lambda_i(T)|$ (governs convergence if $rho(T) < 1$)],
+  [$chevron.l x, y chevron.r$], [Dot Product], [Get the dot product between vectors $x$ and $y$]
 )
 
+#v(1em)
 
-=== Linear Systems/Sensitivity Analysis
-- *System Form:* $A x = b$
-- *Column Sum Norm ($1$-norm):*
-  $ ||A||_1 = max_(1 <= j <= n) sum_(i=1)^n |a_(i j)| $
-- *Row Sum Norm ($oo$-norm):*
-  $ ||A||_oo = max_(1 <= i <= n) sum_(j=1)^n |a_(i j)| $
 
-#text(weight: "bold")[Residual & Sensitivity Bounds]
-#line(length: 100%, stroke: 0.5pt + luma(200))
-- *Residual Vector:* $r = b - A hat(x)$
-- *Relative Error Bound:*
-  $ (||x - hat(x)||) / (||x||) <= kappa(A) (||r||) / (||A|| ||hat(x)||) $
-- *Trustworthy Decimals ($d$):*
-  $ d = |log_10 (epsilon_m)| - log_10 (kappa(A)) $
+#columns(2)[
+  === 2. Linear Systems/Sensitivity Analysis
+  #line(length: 100%, stroke: 0.5pt + luma(200))
+  - *System Form:* $A x = b$
+  - *Column Sum Norm ($1$-norm):*
+    $ ||A||_1 = max_(1 <= j <= n) sum_(i=1)^n |a_(i j)| $
+  - *Row Sum Norm ($oo$-norm):*
+    $ ||A||_oo = max_(1 <= i <= n) sum_(j=1)^n |a_(i j)| $
 
-=== Direct Matrix Decompositions
+  #v(0.5em)
+  #text(weight: "bold")[Residual & Sensitivity Bounds]
+  #line(length: 100%, stroke: 0.5pt + luma(200))
+  - *Residual Vector:* $r = b - A hat(x)$
+  - *Relative Error Bound:*
+    $ (||x - hat(x)||) / (||x||) <= kappa(A) (||r||) / (||A|| ||hat(x)||) $
+  - *Trustworthy Decimals ($d$):*
+    $ d = |log_10 (epsilon_m)| - log_10 (kappa(A)) $
 
-==== Matrix Splitting
-$ A = D + L + U $
-where $D$ is diagonal, $L$ is strictly lower triangular, and $U$ is strictly upper triangular.
+  === 3. Direct Matrix Decompositions
 
-==== LU Factorization ($A = L U$)
-Transforms a non-singular matrix into lower ($L$) and upper ($U$) triangular factors.
+  ==== 3.1 Matrix Splitting
+  $ A = D + L + U $
+  where $D$ is diagonal, $L$ is strictly lower triangular, and $U$ is strictly upper triangular.
 
-- *Doolittle Factorization* (Diagonal $l_(i i) = 1$):
-  $ u_(k j) &= a_(k j) - sum_(m=1)^(k-1) l_(k m) u_(m j), quad &j = k, dots, n \
-    l_(i k) &= 1 / u_(k k) (a_(i k) - sum_(m=1)^(k-1) l_(i m) u_(m k)), quad &i = k+1, dots, n $
+  ==== 3.2 LU Factorization ($A = L U$)
+  Transforms a non-singular matrix into lower ($L$) and upper ($U$) triangular factors.
 
-- *Crout Factorization* (Diagonal $u_(i i) = 1$):
-  $ l_(i k) &= a_(i k) - sum_(m=1)^(k-1) l_(i m) u_(m k), quad &i = k, dots, n \
-    u_(k j) &= 1 / l_(k k) (a_(k j) - sum_(m=1)^(k-1) l_(k m) u_(m j)), quad &j = k+1, dots, n $
+  - *Doolittle Factorization* (Diagonal $l_(i i) = 1$):
+    $ u_(k j) &= a_(k j) - sum_(m=1)^(k-1) l_(k m) u_(m j), quad &j = k, dots, n \
+      l_(i k) &= 1 / u_(k k) (a_(i k) - sum_(m=1)^(k-1) l_(i m) u_(m k)), quad &i = k+1, dots, n $
 
-==== Cholesky Factorization ($A = L L^T$)
-Applicable ONLY to Symmetric Positive Definite (SPD) matrices ($A^T = A$ and $x^T A x > 0, forall x != 0$).
+  - *Crout Factorization* (Diagonal $u_(i i) = 1$):
+    $ l_(i k) &= a_(i k) - sum_(m=1)^(k-1) l_(i m) u_(m k), quad &i = k, dots, n \
+      u_(k j) &= 1 / l_(k k) (a_(k j) - sum_(m=1)^(k-1) l_(k m) u_(m j)), quad &j = k+1, dots, n $
 
-- *Quadratic Form:*
-  $ q(x) = x^T A x = sum_(i=1)^n a_(i i) x_i^2 + 2 sum_(i > j) a_(i j) x_i x_j > 0 $
+  ==== 3.3 Cholesky Factorization ($A = L L^T$)
+  Applicable ONLY to Symmetric Positive Definite (SPD) matrices ($A^T = A$ and $x^T A x > 0, forall x != 0$).
 
-- *Diagonal Factor Entries ($i = j$):*
-  $ l_(j j) = sqrt(a_(j j) - sum_(k=1)^(j-1) l_(j k)^2) $
+  - *Quadratic Form:*
+    $ q(x) = x^T A x = sum_(i=1)^n a_(i i) x_i^2 + 2 sum_(i > j) a_(i j) x_i x_j > 0 $
 
-- *Off-Diagonal Factor Entries ($i > j$):*
-  $ l_(i j) = 1 / l_(j j) (a_(i j) - sum_(k=1)^(j-1) l_(i k) l_(j k)) $
+  - *Diagonal Factor Entries ($i = j$):*
+    $ l_(j j) = sqrt(a_(j j) - sum_(k=1)^(j-1) l_(j k)^2) $
 
-=== Iterative Methods
-#line(length: 100%, stroke: 0.5pt + luma(200))
+  - *Off-Diagonal Factor Entries ($i > j$):*
+    $ l_(i j) = 1 / l_(j j) (a_(i j) - sum_(k=1)^(j-1) l_(i k) l_(j k)) $
 
-==== Jacobi Method ($A = D + L + U$)
-- *Matrix Form:*
-  $ x^((k)) = -D^(-1)(L + U)x^((k-1)) + D^(-1)b $
-  $ T_J = -D^(-1)(L + U), quad c_J = D^(-1)b $
-- *Component Form:*
-  $ x_i^((k)) = 1/a_(i i) ( b_i - sum_(j=1, j != i)^n a_(i j) x_j^((k-1)) ) $
+  === 4. Iterative Methods
+  #line(length: 100%, stroke: 0.5pt + luma(200))
 
-==== Gauss-Seidel Method ($A = D + L + U$)
-- *Matrix Form:*
-  $ x^((k)) = -(D + L)^(-1) U x^((k-1)) + (D + L)^(-1) b $
-  $ T_"GS" = -(D + L)^(-1) U, quad c_"GS" = (D + L)^(-1) b $
-- *Component Form:*
-  $ x_i^((k)) = 1/a_(i i) ( b_i - sum_(j=1)^(i-1) a_(i j) x_j^((k)) - sum_(j=i+1)^n a_(i j) x_j^((k-1)) ) $
+  ==== 4.1 Jacobi Method ($A = D + L + U$)
+  - *Matrix Form:*
+    $ x^((k)) = -D^(-1)(L + U)x^((k-1)) + D^(-1)b $
+    $ T_J = -D^(-1)(L + U), quad c_J = D^(-1)b $
+  - *Component Form:*
+    $ x_i^((k)) = 1/a_(i i) ( b_i - sum_(j=1, j != i)^n a_(i j) x_j^((k-1)) ) $
 
-==== SOR Method ($A = D + L + U$)
-- *Matrix Form:*
-  $ x^((k)) = (D - omega L)^(-1) [(1 - omega)D + omega U] x^((k-1)) + omega (D - omega L)^(-1) b $
-  $ T_omega = (D - omega L)^(-1) [(1 - omega)D + omega U], quad c_omega = omega (D - omega L)^(-1) b $
-- *Component Form:*
-  $ x_i^((k)) = (1 - omega)x_i^((k-1)) + omega / a_(i i) [b_i - sum_(j=1)^(i-1) a_(i j) x_j^((k)) - sum_(j=i+1)^n a_(i j) x_j^((k-1))] $
+  ==== 4.2 Gauss-Seidel Method ($A = D + L + U$)
+  - *Matrix Form:*
+    $ x^((k)) = -(D + L)^(-1) U x^((k-1)) + (D + L)^(-1) b $
+    $ T_"GS" = -(D + L)^(-1) U, quad c_"GS" = (D + L)^(-1) b $
+  - *Component Form:*
+    $ x_i^((k)) = 1/a_(i i) ( b_i - sum_(j=1)^(i-1) a_(i j) x_j^((k)) - sum_(j=i+1)^n a_(i j) x_j^((k-1)) ) $
 
-=== Iterative Refinement
-#line(length: 100%, stroke: 0.5pt + luma(200))
+  ==== 4.3 SOR Method ($A = D + L + U$)
+  - *Matrix Form:*
+    $ x^((k)) = (D - omega L)^(-1) [(1 - omega)D + omega U] x^((k-1)) + omega (D - omega L)^(-1) b $
+    $ T_omega = (D - omega L)^(-1) [(1 - omega)D + omega U], quad c_omega = omega (D - omega L)^(-1) b $
+  - *Component Form:*
+    $ x_i^((k)) = (1 - omega)x_i^((k-1)) + omega / a_(i i) [b_i - sum_(j=1)^(i-1) a_(i j) x_j^((k)) - sum_(j=i+1)^n a_(i j) x_j^((k-1))] $
 
-- *Residual Vector:*
-  $ r = b - A hat(x) $
+  === 5. Iterative Refinement
+  #line(length: 100%, stroke: 0.5pt + luma(200))
 
-- *Error Vector:*
-  $ e = x - hat(x) $
+  - *Residual Vector:*
+    $ r = b - A hat(x) $
 
-- *Condition Number:*
-  $ kappa(A) = ||A|| dot ||A^(-1)|| $
-  
+  - *Error Vector:*
+    $ e = x - hat(x) $
+
+  - *Condition Number:*
+    $ kappa(A) = ||A|| dot ||A^(-1)|| $
+
+  === 6. Eigenvalue Approximation
+
+  ==== 6.1 Power Methods
+  These methods are used to approximate eigenvalues by approximating eigenvectors. Once an approximate eigenvector $x^((k))$ has been found, it can be used to calculate its associated eigenvalue.
+
+  ===== 6.1.1 Calculating Eigenvalue from Eigenvector
+  *6.1.1.1 Infinity Norm*
+  $ lambda = ||x^((k))||_infinity $
+  But only before normalization.
+
+  *6.1.1.2 Rayleigh Quotient*
+  $ lambda = (x^((k)T) A x^((k))) / (x^((k)T) x^((k))) $
+
+  ===== 6.1.2 Power Method
+  Approximates the eigenvector associated with the largest eigenvalue $|lambda_1|$.
+  $ x^((k+1)) = A x^((k)) $
+
+  ==== 6.1.3 Normalized Power Method
+  Approximates the eigenvector associated with the largest eigenvalue $|lambda_1|$, but without the values of $x^((k))$ going to infinity or zero.
+  $ x^((k+1)) = (A x^((k))) / (||A x^((k))||_infinity) $
+  Normalization of this kind can be applied to other Power Methods.
+
+  ==== 6.1.4 Inverse Power Method
+  Approximates the eigenvector associated with the eigenvalue $1/(|lambda_n|)$. From there you can derive the smallest eigenvalue $|lambda_n|$.
+  $ x^((k+1)) = A^(-1) x^((k)) $
+  or
+  $ A x^((k+1)) = x^((k)) $
+
+  ==== 6.1.5 Shifted Inverse Power Method
+  Approximates the eigenvector associated with the eigenvalue $|lambda|$ closest to some $sigma$.
+  $ x^((k+1)) = (A - sigma I)^(-1) x^((k)) $
+  or
+  $ (A - sigma I) x^((k+1)) = x^((k)) $
+
+  ==== 6.2 Gershgorin Circle Theorem
+  The Shifted Inverse Power Method works best when $sigma$ is close to $lambda$. The Gershgorin Circle Theorem allows us to calculate bounds for a matrix's eigenvalues, giving us some idea of where they are. 
+
+  ===== 6.2.1 Theorem
+  For any complex eigenvalues, for any rows $i$ of the $n times n$ matrix $A$:
+  $ |lambda - a_(i i)| <= limits(sum)_(c=1, c!=i)^n |a_(i c)| $
+  This theorem lets us define circles on the complex plane, wherein the eigenvalues of $A$ are.
+
+  Any circles that do not intersect with other circles must have an eigenvalue inside them. Any $k$ circles that intersect must have $k$ eigenvalues within their union.
+
+  ===== 6.2.2 Gershgorin Discs
+  $ D_i = {z in CC: |z - a_(i i)| <= limits(sum)_(c=1, c!=i)^n |a_(i c)|} $
+
+  ==== 6.3 QR Factorization
+  You wish to factor a matrix $A$ such that $A = Q R$.
+
+  $ A &= mat(
+    dots.v, dots.v, dots.v;
+    a_1, a_2, a_3;
+    dots.v, dots.v, dots.v
+  ) \
+    Q &= mat(
+    dots.v, dots.v, dots.v;
+    q_1, q_2, q_3;
+    dots.v, dots.v, dots.v
+  ) \
+    R &= mat(
+    r_11, r_12, r_13;
+    0, r_22, r_23;
+    0, 0, r_33
+  ) $
+
+  $ v_1 &= a_1, quad r_11 = ||v_1||_2, quad q_1 = v_1 / r_11 \
+    r_12 &= chevron.l q_1, a_2 chevron.r \
+    v_2 &= a_2 - r_12 q_1 \
+    r_22 &= ||v_2||_2, quad q_2 = v_2 / r_22 \
+    r_13 &= chevron.l q_1, a_3 chevron.r, quad r_23 = chevron.l q_2, a_3 chevron.r \
+    v_3 &= a_3 - r_13 q_1 - r_23 q_2 \
+    r_33 &= ||v_3||_2, quad q_3 = v_3 / r_33 \
+    &dots.v $
+
+  $ r_(j i) &= cases(
+    chevron.l q_j, a_i chevron.r &"if" j < i,
+    0 &"if" j > i
+  ) \
+    v_i &= a_i - limits(sum)_(j=1)^(i-1) r_(j i) q_j \
+    r_(i i) &= ||v_i||_2, quad q_i = v_i / r_(i i) $
+]
+
 == Contribution of Each Student
 
 #align(center)[
@@ -1925,10 +2050,9 @@ Applicable ONLY to Symmetric Positive Definite (SPD) matrices ($A^T = A$ and $x^
       
       [#h(2em) [W4] Eigenvalue Approximations: Gram-Schmidt, QR Factorization and Iteration], [#align(left)[*Contributor*]],
       
-      [*1.4. [W5] Least Squares Approximation, Rayleigh Quotient* \ #text(fill: luma(100), style: "italic")[1.3. Least Squares (optional)]], [#align(left)[]]
+      [*1.4. [W5] Least Squares Approximation, Rayleigh Quotient* \ #text(fill: luma(100), style: "italic")[1.3. Least Squares (optional)]], [#align(left)[*Chua \ Emnace \ Real*]]
     )
   ]
 ]
 
-
-#bibliography("resources/bibs/class_notes/le1/Group_1_WFW.bib", style: "apa", full: true)
+#bibliography("resources/bibs/class_notes/le1/LE1_WFW.bib", style: "apa", full: true)
