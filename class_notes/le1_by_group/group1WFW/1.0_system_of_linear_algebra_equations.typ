@@ -50,7 +50,7 @@ $ "cond"(A) equiv ||A|| ||A^(-1)||, quad 1 <= "cond"(A) <= oo $
 - *Ill-conditioned:* $"cond"(A) >> 1$ (small errors or round-offs cause massive changes in $x$).
 - *Singular:* $"cond"(A) = oo$.
 
-== Residual Analysis @ruaya2026intro[Slide 18]
+== Residual Analysis @ruaya2026gaussian[Slide 18]
 Given an approximate computed solution $hat(x)$:
 - *True error:* $e = x - hat(x)$ ($x$ is mostly unknown).
 - *Residual vector:* $r = b - A hat(x)$.
@@ -58,7 +58,7 @@ Given an approximate computed solution $hat(x)$:
   - If $A$ is well-conditioned, a small residual guarantees a small error.
   - If $A$ is ill-conditioned, $hat(x)$ can produce a tiny residual $r$ while still having large error $e$.
 
-=== Note on Precision @ruaya2026intro[Slide 35]
+=== Note on Precision @ruaya2026gaussian[Slide 35]
 If input data is stored to machine precision $epsilon_m$, the number of trustworthy decimal digits $d$ in the computed solution is:
 $ d = |log_10 (epsilon_m)| - log_10 ("cond"(A)) $
 
