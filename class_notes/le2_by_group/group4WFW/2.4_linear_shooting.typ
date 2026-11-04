@@ -9,7 +9,7 @@
 #show bibliography: set heading(numbering: none)
 
 
-== Motivation
+= Motivation
 Let us discuss a method for solving boundary value problems (BVPs) for second order differential equations (SODEs). We are given the following SODE:
 
 $ y'' = f(x, y, y'), a<=x<=b, y(a) = alpha,  y(b) = beta $
@@ -22,9 +22,9 @@ The only information we lack is in regards to $y'(a) = gamma$. So why not guess?
 
 We can make a guess, $y'(a) = t_k$, solve the resulting IVP to get some $y^(\(k\))$, check to see whether $y^(\(k\))(b) = beta$, and adjust accordingly if it isn't. This is the general idea of the shooting method.
 
-== Linear Shooting
-=== Method
-Let us first look at the linear case, because it has certain properties that allow us to obtain the solution in only two shots.
+= Linear Shooting
+== Method
+Let us first look at the linear case, because it has certain properties that allow us to obtain the solution by solving only 2 IVPs.
 
 Given the following BVP for a linear SODE:
 $ f(x, y, y') = p(x)y' + q(x)y + r(x), a<=x<=b, y(a) = alpha,  y(b) = beta $
@@ -43,7 +43,7 @@ $y(b) = beta = C y_H(b) + y_N(b) => C = (beta - y_N(b))/y_H(b)  $\
 $ y(x) = y_N (x) + (beta - y_N(b))/y_H(b) y_H (x) $
 
 Of course, as can be seen in the form of the solution, this metiod relies on the assumption that y_H(b) \u{2260} 0.
-=== Explanation
+== Explanation
 This works because of the superposition principle applicable to linear ODEs.
 The superposition principle  states the following:
 
