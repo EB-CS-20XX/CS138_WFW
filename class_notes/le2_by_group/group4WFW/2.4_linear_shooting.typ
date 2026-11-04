@@ -56,4 +56,4 @@ We can set $a = 1, b=-p(x), c=-q(x), f_1(x) = r(x), f_2(x)=0, y_1 = y_N, y_2 = y
 $  y''-p(x) y'-q(x) y = r(x) => y_N\  y''-p(x) y'-q(x) y = 0 => y_H\  y''-p(x) y'-q(x) y = k_1r(x) => k_1y_N+k_2 y_H  $
 And now we have the forms of the two SODEs used for the IVPs. From here we can set $k_1 = 1, k_2 = C$ so that the initial values in the IVPs make it easier to isolate and calculate C such that it fufils the boundary conditions.
 
-#bibliography("/resources/bibs/class_notes/le1/2.4_linear_shooting.bib", style: "apa")
+#bibliography("/resources/bibs/class_notes/le2/2.4_shooting_methods.bib", style: "apa")

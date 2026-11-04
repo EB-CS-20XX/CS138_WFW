@@ -39,4 +39,4 @@ $  t_(k+1) = t_k - (y(b, t_k) - beta)/(v(b,t_k))  , t_0 = (beta-alpha)/(b-a) $
 $ y''(x, t) =  f(x, y(x,t), y'(x,t)) \ y(a, t_k) = alpha, y'(a, t_k) = t_k $
 $ v''(x, t) = (partial )/(partial y)f(x, y, y')v(x, t) + (partial )/(partial y')f(x, y, y')v'(x, t)\  v(a, t_k) = 0, v'(a, t_k) = 1 $
 
-#bibliography("/resources/bibs/class_notes/le1/2.4_shooting_methods.bib", style: "apa")
+#bibliography("/resources/bibs/class_notes/le2/2.4_shooting_methods.bib", style: "apa")
