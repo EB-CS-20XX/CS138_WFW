@@ -1,4 +1,4 @@
-#import "../../template.typ": project
+#import "../../../template.typ": project
 
 #show: project.with(
   title: "1.0 Introduction to System of Linear Algebra Equations",
