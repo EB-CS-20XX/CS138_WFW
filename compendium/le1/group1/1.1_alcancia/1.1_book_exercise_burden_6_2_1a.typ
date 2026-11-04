@@ -1,4 +1,4 @@
-#import "../../template.typ": project
+#import "../../../template.typ": project
 
 #show: project.with(
   title: "Exercise 6.2 #1a: Row Interchanges in Gaussian Elimination",

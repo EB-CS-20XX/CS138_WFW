@@ -1,4 +1,4 @@
-#import "../../template.typ": project
+#import "../../../../template.typ": project
 
 #show: project.with(
   title: "Exercise 6.1 & 6.2 Remixed Problems",
@@ -104,9 +104,9 @@ $
 == Augmented form $[A | b]$:
 $
   [A | b] = mat(delim: "[", augment: #(-1),
-     1, -5, 1, 7;
+    1, -5, 1, 7;
     10, 0, 20, 6;
-     5, 0, -1, 4
+    5, 0, -1, 4
   )
 $
 
@@ -143,4 +143,4 @@ During the preparation of this work, the author(s) utilized Google Gemini solely
 
 Conversation Link: https://share.gemini.google/Es3lGDSaIlPk
 
-#bibliography("../../resources/bibs/compendium/le1/1.1_remix_burden_pivoting_comparison.bib", style: "apa")
+#bibliography("../../../../resources/bibs/compendium/le1/1.1_remix_burden_pivoting_comparison.bib", style: "apa")

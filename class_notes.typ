@@ -2046,7 +2046,7 @@ Conversation:_ #link("https://claude.ai/share/a2c73a0e-7515-493e-b290-2af4721afa
       
       [*1.3. [W4] Real Eigenvalue Approximations of a Square Matrix* \ #text(fill: luma(100), style: "italic")[1.2. Eigenvalue Approximations of a Square Matrix]], [#align(left)[]],
       
-      [#h(2em) [W3] Eigenvalue Approximations: Power Method, Gershgorin Circle Theorem], [#align(left)[*Baratang \ Cruz*]],
+      [#h(2em) [W3] Eigenvalue Approximations: Power Method, Gershgorin Circle Theorem], [#align(left)[*Baratang \ Dela Cruz*]],
       
       [#h(2em) [W4] Eigenvalue Approximations: Gram-Schmidt, QR Factorization and Iteration], [#align(left)[*Contributor*]],
       
